@@ -4,7 +4,7 @@ import 'package:flutter_application_1/pages/homepage.dart';
 import 'package:flutter_application_1/pages/login.dart';
 import 'package:flutter_application_1/pages/maps_view.dart';
 import 'package:flutter_application_1/pages/profile_view.dart';
-import 'package:flutter_application_1/pages/register_view.dart';
+import 'package:flutter_application_1/pages/editprofil_view.dart';
 import 'package:flutter_application_1/widgets/bottom_navbar.dart';
 import 'package:get/get.dart';
 
@@ -17,8 +17,8 @@ class AppPage {
     GetPage(name: maps, page: () => const MapsView()),
     GetPage(name: profile, page: () => const ProfileView()),
     GetPage(name: login, page: () => const Login()),
-    GetPage(name: regis, page: () => const RegisterView()),
-    GetPage(name: auth, page: () => const AuthView()),
+    GetPage(name: edit, page: () => const EditProfile()),
+    GetPage(name: auth, page: () => AuthView()),
   ];
 
   static getnavbar() => navbar;
@@ -27,7 +27,7 @@ class AppPage {
   static getmaps() => maps;
   static getprofile() => profile;
   static getlogin() => login;
-  static getRegis() => regis;
+  static getEdit() => edit;
   static getAuth() => auth;
 
   static String navbar = '/';
@@ -36,6 +36,6 @@ class AppPage {
   static String maps = '/maps';
   static String profile = '/profile';
   static String login = '/login';
-  static String regis = '/register';
+  static String edit = '/edit';
   static String auth = '/auth';
 }

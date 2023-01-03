@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/register_view.dart';
-
-import 'package:get/get.dart';
 
 class Login extends StatelessWidget {
 
@@ -73,7 +70,6 @@ class Login extends StatelessWidget {
                     const Text('Tidak punya akun?' , maxLines: 2, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400), textAlign: TextAlign.center,),
                     TextButton(
                       onPressed: (){
-                        Get.to(const RegisterView());
                       }, 
                       child: const Text('Register', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400), textAlign: TextAlign.center,)
                     )

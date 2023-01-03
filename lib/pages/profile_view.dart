@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/Controllers/user_controller.dart';
 import 'package:flutter_application_1/pages/auth_view.dart';
+import 'package:flutter_application_1/pages/editprofil_view.dart';
 import 'package:get/get.dart';
 
 class ProfileView extends StatefulWidget {
@@ -10,6 +12,7 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
+
   @override
   Widget build(BuildContext context) {
     final mediaQueryHeight = MediaQuery.of(context).size.height;
@@ -66,6 +69,8 @@ class ProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var user = Get.put(UserController());
+
     return Positioned(
       bottom: 0,
       left: 0,
@@ -84,15 +89,17 @@ class ProfileCard extends StatelessWidget {
                 child: Center(
                   child: Column(
                     children: <Widget> [
-                      const Padding(
-                        padding: EdgeInsets.symmetric( vertical: 8),
-                        child: Text(
-                          'Zildan Isrezkinurahman Hernawan',
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold
+                      Padding(
+                        padding: const EdgeInsets.symmetric( vertical: 8),
+                        child: Obx(
+                          () => Text(
+                            user.user.value.displayName,
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                            ),
                           ),
                         ),
                       ),
@@ -119,20 +126,37 @@ class ProfileCard extends StatelessWidget {
                 width: mediaQueryWidht,
                 //color: Colors.amber,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8),
                       child: 
-                      TextButton(
-                        onPressed: (){}, 
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            Text('Edit Profile', style: TextStyle(fontSize: 18, color: Colors.grey),),
-                            Icon(Icons.arrow_forward_outlined, ),
-                          ],
-                        )
+                      Column(
+                        children: [
+                          TextButton(
+                            onPressed: (){
+                              Get.to(() => const EditProfile());
+                            }, 
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: const [
+                                Text('Edit Profile', style: TextStyle(fontSize: 18, color: Colors.grey),),
+                                Icon(Icons.arrow_forward_outlined, ),
+                              ],
+                            )
+                          ),
+                          const Divider(),
+                          TextButton(
+                            onPressed: (){}, 
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: const [
+                                Text('Daftar Perawat', style: TextStyle(fontSize: 18, color: Colors.grey),),
+                                Icon(Icons.arrow_forward_outlined, ),
+                              ],
+                            )
+                          ),
+                        ],
                       ),
                     ),
                     
@@ -140,7 +164,7 @@ class ProfileCard extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       child: 
                       TextButton(
-                        onPressed: () { Get.to(const AuthView());},
+                        onPressed: () { Get.off( AuthView());},
                         child: const Text('Logout', style: TextStyle(fontSize: 18),),
                       ),
                     )

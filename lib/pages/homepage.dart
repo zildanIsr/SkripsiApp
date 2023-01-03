@@ -1,5 +1,10 @@
+
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/listperawat_view.dart';
+import 'package:flutter_application_1/widgets/perawat_card.dart';
 import '../Models/kategori_model.dart';
+
+import 'package:get/get.dart';
 
 class Homepage extends StatelessWidget {
 
@@ -11,18 +16,32 @@ class Homepage extends StatelessWidget {
     //final mediaQueryWidht = MediaQuery.of(context).size.width;
     final myAppBar = AppBar (
       elevation: 0.0,
-      backgroundColor: Colors.pink.shade100,
-      leading: Builder(
-        builder: (BuildContext context) {
-          return IconButton(
-            icon: const Icon(Icons.person),
-            iconSize: 30,
-            onPressed: () { },
-            tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-          );
-        },
+      toolbarHeight: 60,
+      title: Row(
+        children: [
+          const CircleAvatar(
+            backgroundColor: Colors.black
+          ),
+          Container(
+            padding: const EdgeInsets.only(left: 16.0),
+            width: 150,
+            child: const Text('Zildan Isrezki nurahman hernawan', 
+              overflow: TextOverflow.ellipsis,
+              softWrap: false,
+              maxLines: 1,
+            ),
+          )
+        ],
       ),
-      title: const Text('Nama'),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: IconButton(
+            onPressed: (){}, 
+            icon: const Icon(Icons.add)
+          ),
+        )
+      ],
     );
 
     final bodyHeight = mediaQueryHeight - myAppBar.preferredSize.height - MediaQuery.of(context).padding.top;
@@ -31,51 +50,56 @@ class Homepage extends StatelessWidget {
       appBar: myAppBar,
       body: Column(
         children: <Widget> [
-          Container(
-            height: bodyHeight * 0.4,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                stops: const [
-                  0.1,
-                  0.4               
-                ],
-                colors: [
-                  Colors.pink.shade100,
-                  Colors.white70
-                ],
-              )
-            ),
+          SizedBox(
+            //color: Colors.amber,
+            height: bodyHeight * 0.26,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Expanded(
-                    flex: 1,
+                  const Flexible(
                     child: Padding(
                       padding: EdgeInsets.only(top: 8.0),
                       child: Text('Kategori Layanan',
                             style: TextStyle(
-                              color: Colors.white,
                               fontSize: 24,
                               fontWeight: FontWeight.bold
                             ),
                           ),
                     )
                   ),
-                  Expanded(
-                    flex: 4,
-                    child: CategoryList()
+                  Flexible(
+                    flex: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: CategoryList(),
+                    )
                   )
                 ],
               ),
             ),
           ),
           Container(
-            height: bodyHeight * 0.5,
-            color: Colors.grey,
+            height: bodyHeight * 0.66,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const <Widget> [
+                Padding(
+                  padding: EdgeInsets.only(bottom: 8.0),
+                  child: Text('Populer',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold
+                        ),
+                      ),
+                ),
+                Flexible(
+                  child: PerawatCard()
+                )
+              ],
+            ),
           )
         ],
       ),
@@ -87,24 +111,30 @@ class CategoryList extends StatelessWidget {
   CategoryList({super.key});
 
   final List<Kategori> categories = <Kategori> [
-    Kategori(Icons.home, 'Home',),  
-    Kategori(Icons.home, 'Home',),  
-    Kategori(Icons.contacts, 'Contact'),  
-    Kategori(Icons.contacts, 'Contact'),  
-    Kategori(Icons.map, 'Maps'),  
-    Kategori(Icons.map, 'Maps'),  
-    Kategori(Icons.phone, 'Phone'),  
-    Kategori(Icons.phone, 'Phone'),  
+    Kategori('1', Icons.medical_information, 'Infusisasi',),  
+    Kategori('2', Icons.medical_information, 'Rawat Jalan',),  
+    Kategori('3', Icons.medical_information, 'Edukasi'),  
+    Kategori('4', Icons.medical_information, 'Tensi'),  
+    Kategori('5', Icons.medical_information, 'Rawat Luka'),  
+    Kategori('6', Icons.medical_information, 'Obat'),  
   ];  
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 4,
-      mainAxisSpacing: 8,
-      crossAxisSpacing: 8,
-      children: List.generate(categories.length, (index) => 
-        SelectCard(category: categories[index]),  
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: categories.isEmpty ? 
+          <Widget> [
+            const Text(
+                "Tidak ada",
+                style: TextStyle(color: Colors.grey),
+            )
+          ]
+        : 
+          List.generate(categories.length, (index) =>
+            SelectCard(category: categories[index])
+          )
       )
     );
   }
@@ -116,15 +146,32 @@ class SelectCard extends StatelessWidget {
   
   @override  
   Widget build(BuildContext context) {  
-    return Center(
+    return Container(
+      constraints: const BoxConstraints(
+        maxHeight: 100,
+        maxWidth: 100
+      ),
+      width: 100,
+      height: 100,
+      margin: const EdgeInsets.only(right: 4),
       child: Column(
         children: <Widget> [
           Expanded(
-            child: CircleAvatar(
-              radius: 35,
-              child: Icon(category.icon, size: 40,),
-            )
-          ),
+            child: Card(
+              clipBehavior: Clip.hardEdge,
+              child: InkWell(
+                splashColor: Colors.pinkAccent.withAlpha(30),
+                onTap: () {
+                  Get.to(() => const ListPerawatView(), arguments: category.name);
+                },
+                child: SizedBox(
+                  width: double.infinity,
+                  height: double.infinity,
+                  child: Icon(category.icon, size: 40,))
+                )
+              ),
+            ),
+          const SizedBox(height: 4,),
           Text(category.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),)  
         ],
       ),
