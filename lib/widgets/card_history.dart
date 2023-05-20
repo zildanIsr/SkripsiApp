@@ -1,26 +1,342 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/Controllers/category_controller.dart';
+import 'package:flutter_application_1/Models/kategori_model.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
-class CardHistory extends StatelessWidget {
-  const CardHistory({super.key});
+import '../Controllers/auth.dart';
+import '../pages/detail_history.dart';
+
+class ItemHistoryPasien extends StatelessWidget {
+  const ItemHistoryPasien(
+      {super.key,
+      required this.orderNumber,
+      required this.amountPrice,
+      required this.statusOrder,
+      required this.userId,
+      required this.categoryId,
+      required this.isFinished,
+      required this.id});
+
+  final int id;
+  final String orderNumber;
+  final int amountPrice;
+  final int statusOrder;
+  final int userId;
+  final int categoryId;
+  final bool isFinished;
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      scrollDirection: Axis.vertical,
-      itemCount: 4,
-      itemBuilder: ((context, index) {
-        return const Card(
-          child: ListTile(
-            leading: FlutterLogo(size: 72.0),
-            title: Text('Three-line ListTile'),
-            subtitle: Text(
-              'A sufficiently long subtitle warrants three lines.'
+    void popRate() {
+      Get.bottomSheet(Container(
+        width: MediaQuery.of(context).size.width,
+        height: 270.0,
+        padding: const EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 8.0),
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+          color: Colors.white,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text(
+              'Rating Layanan',
+              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w600),
             ),
-            trailing: Icon(Icons.more_vert),
-            isThreeLine: true,
+            const SizedBox(
+              height: 8.0,
+            ),
+            const Text(
+              'Berikan ulasan kamu pada layanan ini',
+              style: TextStyle(fontSize: 16.0),
+            ),
+            const SizedBox(
+              height: 16.0,
+            ),
+            RatingBar.builder(
+              initialRating: 3,
+              minRating: 1,
+              direction: Axis.horizontal,
+              allowHalfRating: true,
+              itemCount: 5,
+              itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+              itemBuilder: (context, _) => const Icon(
+                Icons.star,
+                color: Colors.amber,
+              ),
+              onRatingUpdate: (rating) {
+                print(rating);
+              },
+            ),
+            const SizedBox(
+              height: 16.0,
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: TextField(
+                maxLines: 1,
+              ),
+            ),
+            const SizedBox(
+              height: 16.0,
+            ),
+            Container(
+                width: double.infinity,
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: ElevatedButton(
+                    onPressed: () {}, child: const Text('Kirim')))
+          ],
+        ),
+      ));
+    }
+
+    CategoryController cc = Get.put(CategoryController());
+    Kategori category = cc.getCategory(categoryId);
+
+    return Container(
+      //color: Colors.amber,
+      constraints: BoxConstraints(
+          minWidth: MediaQuery.of(context).size.width,
+          maxHeight: 225,
+          minHeight: 180),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Card(
+        //color: Colors.green,
+        elevation: 4.0,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8))),
+        child: InkWell(
+          onTap: () {
+            Get.to(
+              () => DetailHistory(
+                id: id,
+              ),
+            );
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              StatusOrder(
+                status: statusOrder,
+              ),
+              const SizedBox(
+                height: 2.0,
+              ),
+              const Divider(
+                height: 1.0,
+                thickness: 1,
+              ),
+              const SizedBox(
+                height: 2.0,
+              ),
+              Container(
+                //color: Colors.amber,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'Nomor Pesanan',
+                          style: TextStyle(
+                              fontSize: 18.0, fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(
+                          width: 8.0,
+                        ),
+                        Text(
+                          orderNumber.substring(0, 20),
+                          overflow: TextOverflow.clip,
+                          softWrap: false,
+                          maxLines: 1,
+                          style: const TextStyle(
+                              fontSize: 18.0, fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(
+                          width: 1.0,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Kategori : ',
+                          style: TextStyle(
+                              fontSize: 18.0,
+                              color: Colors.black45,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(
+                          width: 4.0,
+                        ),
+                        Icon(
+                          category.icon,
+                          size: 22.0,
+                        ),
+                        const SizedBox(
+                          width: 8.0,
+                        ),
+                        Text(
+                          category.name,
+                          style: const TextStyle(
+                              fontSize: 18.0, fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Harga : ',
+                          style: TextStyle(
+                              fontSize: 18.0,
+                              color: Colors.black45,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(
+                          width: 4.0,
+                        ),
+                        Text(
+                          NumberFormat.currency(
+                            locale: "id-ID",
+                            decimalDigits: 0,
+                          ).format(amountPrice),
+                          style: const TextStyle(
+                              fontSize: 18.0, fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
+                    isFinished
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              ElevatedButton(
+                                  onPressed: () {
+                                    popRate();
+                                  },
+                                  child: const Text('Ulasan'))
+                            ],
+                          )
+                        : ButtonOrder(
+                            roleId: userId,
+                            status: statusOrder,
+                          )
+                  ],
+                ),
+              ),
+            ],
           ),
-        );
-      })
+        ),
+      ),
+    );
+  }
+}
+
+class ButtonOrder extends StatelessWidget {
+  const ButtonOrder({
+    super.key,
+    required this.roleId,
+    required this.status,
+  });
+
+  final int roleId;
+  final int status;
+
+  @override
+  Widget build(BuildContext context) {
+    AuthController ac = Get.put(AuthController());
+
+    return roleId == ac.user.id
+        ? status == 1 || status == 2
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  ElevatedButton(onPressed: () {}, child: const Text('Selesai'))
+                ],
+              )
+            : Container()
+        : Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: Colors.pink.shade400)),
+                  onPressed: () {},
+                  child: const Text('Tolak')),
+              const SizedBox(
+                width: 8.0,
+              ),
+              ElevatedButton(onPressed: () {}, child: const Text('Terima'))
+            ],
+          );
+  }
+}
+
+class StatusOrder extends StatelessWidget {
+  const StatusOrder({
+    super.key,
+    required this.status,
+  });
+
+  final int status;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      //color: Colors.amber,
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Icon(
+            status == 0
+                ? Icons.access_time_rounded
+                : status == 1
+                    ? Icons.check_circle_outline_outlined
+                    : Icons.error_outline_outlined,
+            size: 28.0,
+            color: status == 1 ? Colors.green : null,
+          ),
+          const SizedBox(
+            width: 8.0,
+          ),
+          Text(
+            status == 0
+                ? "Menunggu konfirmasi"
+                : status == 1
+                    ? "Pesanan Disetujui"
+                    : 'Pesanan Ditolak',
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+          )
+        ],
+      ),
     );
   }
 }

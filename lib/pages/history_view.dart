@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../Controllers/history_controller.dart';
+import '../widgets/card_history.dart';
+import '../widgets/skeleton.dart';
 
 class HistoryView extends StatefulWidget {
   const HistoryView({super.key});
@@ -7,53 +12,122 @@ class HistoryView extends StatefulWidget {
   State<HistoryView> createState() => _HistoryViewState();
 }
 
-class _HistoryViewState extends State<HistoryView> {
+class _HistoryViewState extends State<HistoryView>
+    with TickerProviderStateMixin {
+  late TabController tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    tabController = TabController(
+      initialIndex: 0,
+      length: 2,
+      vsync: this,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    //final mediaQueryHeight = MediaQuery.of(context).size.height;
-    final mediaQueryWidht = MediaQuery.of(context).size.width;
-    
-    final myAppBar = AppBar (
-      elevation: 0.0,
-      title: const Text('Riwayat Transaksi'),
-    );
-
-    //final bodyHeight = mediaQueryHeight - myAppBar.preferredSize.height - MediaQuery.of(context).padding.top;
+    HistoryContoller hc = Get.put(HistoryContoller());
 
     return Scaffold(
-      appBar: myAppBar,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            
-            Expanded(
-              flex: 8,
-              child: ListView.builder(
-                scrollDirection: Axis.vertical,
-                itemCount: 10,
-                itemBuilder: ((context, index) {
-                  return Card(
-                    child: ListTile(
-                      onTap: () {
-                        debugPrint('ontap');
-                      },
-                      leading: const FlutterLogo(size: 72.0),
-                      title: const Text('Three-line ListTile'),
-                      subtitle: const Text(
-                        'A sufficiently long subtitle warrants three lines.'
-                      ),
-                      trailing: const Icon(Icons.more_vert),
-                      isThreeLine: true,
-                    ),
-                  ); 
-                })
-                )
-              )
-          ],
-        ),
+      body: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              title: const Text('Pesanan Kamu'),
+              pinned: true,
+              floating: true,
+              forceElevated: innerBoxIsScrolled,
+              bottom: TabBar(
+                indicator: const UnderlineTabIndicator(
+                    borderSide: BorderSide(width: 3.0, color: Colors.white),
+                    insets: EdgeInsets.symmetric(horizontal: 32.0)),
+                tabs: const <Tab>[
+                  Tab(
+                      child: Text(
+                    'Berjalan',
+                    style: TextStyle(fontSize: 16.0),
+                  )),
+                  Tab(
+                      child: Text(
+                    'Riwayat',
+                    style: TextStyle(fontSize: 16.0),
+                  )),
+                ],
+                controller: tabController,
+              ),
+            ),
+          ];
+        },
+        body: Obx(() => TabBarView(
+              controller: tabController,
+              children: <Widget>[
+                hc.isLoading.value
+                    ? const HistoryCardSkeleton()
+                    : hc.listHistory.isEmpty
+                        ? const Center(
+                            child: Text('Belum ada history',
+                                style: TextStyle(fontSize: 18)))
+                        : RefreshIndicator(
+                            onRefresh: () async {
+                              hc.refreshData();
+                            },
+                            child: ListView.builder(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.vertical,
+                                physics: const BouncingScrollPhysics(),
+                                itemCount: hc.listHistory.length,
+                                padding: EdgeInsets.zero,
+                                itemBuilder: ((context, index) {
+                                  return ItemHistoryPasien(
+                                    key: ValueKey(hc.listHistory[index].id),
+                                    orderNumber: hc.listHistory[index].orderId,
+                                    amountPrice: hc.listHistory[index].totprice,
+                                    categoryId: hc
+                                        .listHistory[index].product.categoryId,
+                                    statusOrder: hc.listHistory[index].status,
+                                    userId: hc.listHistory[index].userId,
+                                    isFinished:
+                                        hc.listHistory[index].isFinished,
+                                    id: hc.listHistory[index].id,
+                                  );
+                                })),
+                          ),
+                hc.isLoading.value
+                    ? const HistoryCardSkeleton()
+                    : hc.listFinished.isEmpty
+                        ? const Center(
+                            child: Text('Belum ada history',
+                                style: TextStyle(fontSize: 18)))
+                        : RefreshIndicator(
+                            onRefresh: () async {
+                              hc.refreshData();
+                            },
+                            child: ListView.builder(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.vertical,
+                                //physics: const BouncingScrollPhysics(),
+                                itemCount: hc.listFinished.length,
+                                padding: EdgeInsets.zero,
+                                itemBuilder: ((context, index) {
+                                  return ItemHistoryPasien(
+                                    key: ValueKey(hc.listFinished[index].id),
+                                    orderNumber: hc.listFinished[index].orderId,
+                                    amountPrice:
+                                        hc.listFinished[index].totprice,
+                                    categoryId: hc
+                                        .listFinished[index].product.categoryId,
+                                    statusOrder: hc.listFinished[index].status,
+                                    userId: hc.listFinished[index].userId,
+                                    isFinished:
+                                        hc.listFinished[index].isFinished,
+                                    id: hc.listFinished[index].id,
+                                  );
+                                })),
+                          )
+              ],
+            )),
       ),
     );
   }

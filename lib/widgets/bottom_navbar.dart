@@ -39,8 +39,8 @@ class _BottomNavbarState extends State<BottomNavbar> {
           onTap: controller.changeTabIndex,
           items: [
             _bottombarItem(Icons.home_filled, 'Home'),
-            _bottombarItem(Icons.history, 'Riwayat'),
-            _bottombarItem(Icons.map, 'Maps'),
+            _bottombarItem(Icons.library_books_rounded, 'Riwayat'),
+            _bottombarItem(Icons.location_on_rounded, 'Maps'),
             _bottombarItem(Icons.person, 'Profile'),
           ],
         ),
@@ -49,7 +49,6 @@ class _BottomNavbarState extends State<BottomNavbar> {
   }
 }
 
-// ignore: unused_element
-_bottombarItem(IconData icon, String label){
+_bottombarItem(IconData icon, String label) {
   return BottomNavigationBarItem(icon: Icon(icon), label: label);
 }
