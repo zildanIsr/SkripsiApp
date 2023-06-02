@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/Controllers/auth.dart';
 import 'package:flutter_application_1/Controllers/product_controller.dart';
 import 'package:flutter_application_1/pages/listperawat_view.dart';
 import 'package:flutter_application_1/widgets/perawat_card.dart';
@@ -15,6 +16,7 @@ class Homepage extends StatelessWidget {
     //final mediaQueryWidht = MediaQuery.of(context).size.width;
 
     final bodyHeight = mediaQueryHeight - MediaQuery.of(context).padding.top;
+    AuthController ac = Get.find();
 
     return Scaffold(
       body: Column(
@@ -28,25 +30,26 @@ class Homepage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.max,
-              children: const [
-                Text(
+              children: [
+                const Text(
                   'Selamat Datang',
                   style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
                       color: Colors.black54),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 4.0,
                 ),
                 SizedBox(
                   width: 200,
                   child: Text(
-                    'Nama Penggunaa aaaaa',
+                    ac.user.name,
                     overflow: TextOverflow.visible,
                     softWrap: true,
                     maxLines: 1,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -82,9 +85,9 @@ class Homepage extends StatelessWidget {
           Container(
             height: bodyHeight * 0.5,
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const <Widget>[
+              children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(bottom: 8.0),
                   child: Text(

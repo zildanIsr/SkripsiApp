@@ -1,3 +1,4 @@
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Controllers/auth.dart';
 
@@ -5,6 +6,9 @@ import 'package:flutter_application_1/Routes/routes.dart';
 import 'package:flutter_application_1/pages/auth_view.dart';
 import 'package:flutter_application_1/widgets/bottom_navbar.dart';
 import 'package:get/get.dart';
+
+//import 'pages/splash_screen.dart';
+import 'package:page_transition/page_transition.dart';
 
 void main() => runApp(const MyApp());
 
@@ -32,27 +36,42 @@ class MyApp extends StatelessWidget {
       //     return const BottomNavbar();
       //   },
       // ),
-      home: FutureBuilder(
-        future: auth.checkToken(),
-        builder: (context, AsyncSnapshot<bool> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
-          var data = snapshot.data;
+      // home: FutureBuilder(
+      //   future: auth.checkToken(),
+      //   builder: (context, AsyncSnapshot<bool> snapshot) {
+      //     if (snapshot.connectionState == ConnectionState.waiting) {
+      //       return const SplashScreen();
+      //     }
+      //     var data = snapshot.data;
 
-          print(data);
+      //     //print(data);
 
-          if (data == true) {
-            return const BottomNavbar();
-          }
+      //     if (data == true) {
+      //       return const BottomNavbar();
+      //     }
 
-          return AuthView();
-        },
-      ),
+      //     return AuthView();
+      //   },
+      // ),
+      home: AnimatedSplashScreen(
+          splash: 'assets/icon_splash.png',
+          nextScreen: FutureBuilder(
+              future: auth.checkToken(),
+              builder: (context, AsyncSnapshot<bool> snapshot) {
+                if (snapshot.hasData) {
+                  var data = snapshot.data;
+
+                  if (data == true) {
+                    return const BottomNavbar();
+                  }
+                }
+
+                return AuthView();
+              }),
+          splashTransition: SplashTransition.fadeTransition,
+          pageTransitionType: PageTransitionType.fade,
+          splashIconSize: 150,
+          backgroundColor: Colors.pink.shade300),
       getPages: AppPage.routes,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

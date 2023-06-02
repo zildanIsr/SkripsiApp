@@ -24,17 +24,40 @@ class AuthController extends GetxController {
     super.onInit();
   }
 
-  void signUpAuth(String? email, String? password) async {
+  signUpAuth(
+      String? email, String? password, Map<String, String>? addtional) async {
     try {
-      Uri url = Uri.parse(
-          'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyC1vKoR-lrVBYZSD_NwApo1NNqNX-iEX7s');
+      var itemList = addtional!.values.toList();
+      //print('${itemList[0]}, ${itemList[1]}');
 
-      await http.post(url,
+      Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/auth/register');
+
+      //print('Name: $email, Password: $password');
+
+      final response = await http.post(url,
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
           body: json.encode({
             "email": email,
             "password": password,
-            "returnSecureToken": true,
+            "name": itemList[0],
+            "phoneNumber": itemList[1]
           }));
+
+      if (response.statusCode >= 400) {
+        return response.statusCode;
+      }
+
+      var resbody = json.decode(response.body)['data'];
+      var token = json.decode(response.body)['token'];
+      _storageService.writeSecureData(StorageItem('token', token));
+      sharedService.addStringToSF(StorageItem('user', json.encode(resbody)));
+
+      user = User.fromJson(resbody);
+
+      return response.statusCode;
     } catch (e) {
       rethrow;
     }
@@ -62,11 +85,13 @@ class AuthController extends GetxController {
       var nurse = json.decode(response.body)['nurse'];
       _storageService.writeSecureData(StorageItem('token', token));
       sharedService.addStringToSF(StorageItem('user', json.encode(resbody)));
-      sharedService.addStringToSF(StorageItem('strNumber', json.encode(nurse)));
 
       user = User.fromJson(resbody);
       //print('str:  ${nurse['strNumber']}');
-      strNumber.value = nurse['strNumber'];
+      if (nurse != null) {
+        strNumber.value = nurse['strNumber'] ?? '';
+        sharedService.addStringToSF(StorageItem('strNumber', strNumber.value));
+      }
 
       // sharedService.addStringToSF(StorageItem('user_name', user.name));
       // sharedService.addIntToSF(StorageItem('role', user.roleId));
@@ -74,7 +99,7 @@ class AuthController extends GetxController {
 
       return response.statusCode;
     } catch (e) {
-      return 500;
+      rethrow;
     }
   }
 

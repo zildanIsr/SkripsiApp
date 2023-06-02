@@ -14,16 +14,16 @@ class AuthView extends StatelessWidget {
   AuthView({super.key});
 
   Duration get loginTime => const Duration(milliseconds: 2250);
-  final authController = Get.put(AuthController());
+  final authController = Get.put(AuthController(), permanent: true);
 
   Future<String?> _authUser(LoginData data) {
     //debugPrint('Name: ${data.name}, Password: ${data.password}');
     return Future.delayed(loginTime).then((_) async {
       var responses = await authController.signInAuth(
           data.name.toLowerCase(), data.password.toLowerCase());
-      if (responses >= 400) {
+      if (responses >= 400 && responses < 500) {
         return 'Email atau password salah';
-      } else if (responses == 500) {
+      } else if (responses >= 500) {
         return 'Login Gagal';
       } else if (responses == 201) {
         authController.isLogin.value = true;
@@ -33,20 +33,30 @@ class AuthView extends StatelessWidget {
   }
 
   Future<String?> _signupUser(SignupData data) {
-    debugPrint('Signup data: ${data.name}, ${data.password}, ');
-    return Future.delayed(loginTime).then((_) {
-      authController.signUpAuth(data.name, data.password);
+    // debugPrint(
+    //     'Signup data: ${data.name}, ${data.password}, ${data.additionalSignupData}');
+    return Future.delayed(loginTime).then((_) async {
+      var responses = await authController.signUpAuth(
+          data.name, data.password, data.additionalSignupData);
+      if (responses >= 400 && responses < 500) {
+        return 'Email sudah digunakan';
+      } else if (responses >= 500) {
+        return 'Register Gagal';
+      } else if (responses == 201) {
+        authController.isLogin.value = true;
+      }
       return null;
     });
   }
 
-  Future<String> _recoverPassword(String name) {
+  Future<String?> _recoverPassword(String name) {
     debugPrint('Name: $name');
+    var nama = 'zildan@gmail.com';
     return Future.delayed(loginTime).then((_) {
-      if (!users.containsKey(name)) {
-        return 'User not exists';
+      if (nama != name) {
+        return 'Pengguna tidak ditemukan';
       }
-      return 'oke';
+      return null;
     });
   }
 
@@ -65,9 +75,37 @@ class AuthView extends StatelessWidget {
               'Kami akan mengirim anda email untuk mengganti password',
           goBackButton: 'Kembali'),
       title: 'Home Nursing',
-      //logo: AssetImage('assets/images/ecorp-lightblue.png'),
+      logo: const AssetImage('assets/Logo_vektor.png'),
+      passwordValidator: (value) {
+        if (value!.length <= 8) {
+          return 'Tidak boleh kurang dari 8';
+        }
+        return null;
+      },
       onLogin: _authUser,
       onSignup: _signupUser,
+      additionalSignupFields: [
+        UserFormField(
+          keyName: 'Username',
+          icon: const Icon(Icons.person),
+          fieldValidator: (value) {
+            if (value == '' || value == null) {
+              return 'Telepon tidak boleh kosong';
+            }
+            return null;
+          },
+        ),
+        UserFormField(
+            keyName: 'Telepon',
+            icon: const Icon(Icons.call),
+            fieldValidator: (value) {
+              if (value == '' || value == null) {
+                return 'Telepon tidak boleh kosong';
+              }
+              return null;
+            },
+            userType: LoginUserType.phone),
+      ],
       onSubmitAnimationCompleted: () {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => const BottomNavbar(),
@@ -77,7 +115,7 @@ class AuthView extends StatelessWidget {
         //     authController.isLogin.value ? const BottomNavbar() : AuthView());
       },
       onRecoverPassword: _recoverPassword,
-      hideForgotPasswordButton: true,
+      //hideForgotPasswordButton: true,
     );
   }
 }

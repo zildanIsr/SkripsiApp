@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/Controllers/history_controller.dart';
 import 'package:get/get.dart';
 
 import '../widgets/bottom_navbar.dart';
@@ -72,6 +73,7 @@ class OrderSuccessViewState extends State<OrderSuccessView>
 
   @override
   Widget build(BuildContext context) {
+    HistoryContoller hc = Get.find();
     return Scaffold(
       body: Center(
         child: Column(
@@ -116,6 +118,7 @@ class OrderSuccessViewState extends State<OrderSuccessView>
             ),
             ElevatedButton(
                 onPressed: () {
+                  hc.refreshData();
                   Get.off(() => const BottomNavbar());
                 },
                 child: const Padding(

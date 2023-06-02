@@ -12,37 +12,38 @@ class DropdownKategori extends StatefulWidget {
 }
 
 class _DropdownKategoriState extends State<DropdownKategori> {
-  ProductController pc = Get.put(ProductController());
+  ProductController pc = Get.find();
   final List<Kategori> categories = kategoriList;
-  late Kategori selectedCategory;
+  late int _selected;
 
   @override
   void initState() {
-    selectedCategory = categories.first;
+    _selected = categories[pc.selectedCategory.value - 1].id;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(8, 12, 12, 8),
+      padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
       decoration: BoxDecoration(
           color: Colors.grey[50], borderRadius: BorderRadius.circular(10)),
       child: DropdownButton(
         isDense: true,
         hint: const Text("Pilih Kategori"),
-        value: selectedCategory,
+        value: _selected,
         alignment: AlignmentDirectional.bottomCenter,
         items: categories.map((value) {
           return DropdownMenuItem(
-            value: value,
+            value: value.id,
             child: Text(value.name),
           );
         }).toList(),
         onChanged: (value) {
+          print(value);
           setState(() {
-            selectedCategory = value as Kategori;
-            pc.onChangedSelectedCat(value.id);
+            _selected = value as int;
+            pc.onChangedSelectedCat(value);
           });
         },
       ),

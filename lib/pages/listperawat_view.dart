@@ -40,10 +40,10 @@ class ListPerawatView extends StatelessWidget {
         body: Obx(() => pc.isLoading.value
             ? const CardSkeleton()
             : pc.listProduct.isEmpty
-                ? Center(
+                ? const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         Icon(
                           Icons.medical_services_outlined,
                           color: Colors.black12,
@@ -67,16 +67,18 @@ class ListPerawatView extends StatelessWidget {
                     itemBuilder: (context, index) {
                       return PerawatListItem(
                         key: ValueKey(pc.listProduct[index].id),
-                        thumbnail: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.blue),
+                        thumbnail: Card(
+                          elevation: 2.0,
+                          child: Image.asset(
+                            'assets/nurse-boy-128.png',
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                        name: pc.listProduct[index].user!.name,
-                        category: pc.listProduct[index].category!.name,
+                        name: pc.listProduct[index].user.name,
+                        category: pc.listProduct[index].category.name,
                         price: pc.listProduct[index].price,
-                        rating: '4.8',
-                        strNumber: pc.listProduct[index].perawat!.strNumber,
+                        rating: pc.listProduct[index].perawat.rating.toString(),
+                        strNumber: pc.listProduct[index].perawat.strNumber,
                         categoryId: pc.listProduct[index].categoryId,
                         productId: pc.listProduct[index].id,
                       );

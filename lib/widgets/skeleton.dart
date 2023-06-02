@@ -79,12 +79,12 @@ class ProfilSkeleton extends StatelessWidget {
             child: Stack(
               clipBehavior: Clip.none,
               children: <Widget>[
-                Positioned(
+                const Positioned(
                   left: 50,
                   right: 50,
                   top: 80,
                   child: Column(
-                    children: const [
+                    children: [
                       SkeletonAvatar(
                         style: SkeletonAvatarStyle(
                             shape: BoxShape.circle,
@@ -116,7 +116,7 @@ class ProfilSkeleton extends StatelessWidget {
                         height: 90,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8.0, vertical: 16.0),
-                        child: Row(
+                        child: const Row(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[
@@ -124,7 +124,7 @@ class ProfilSkeleton extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
+                                children: [
                                   SkeletonLine(
                                     style: SkeletonLineStyle(
                                         padding: EdgeInsets.symmetric(
@@ -151,7 +151,7 @@ class ProfilSkeleton extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
+                                children: [
                                   SkeletonLine(
                                     style: SkeletonLineStyle(
                                         padding: EdgeInsets.symmetric(
@@ -178,7 +178,7 @@ class ProfilSkeleton extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
+                                children: [
                                   SkeletonLine(
                                     style: SkeletonLineStyle(
                                         padding: EdgeInsets.symmetric(
@@ -371,5 +371,86 @@ class HistoryCardSkeleton extends StatelessWidget {
             ),
           ),
         ));
+  }
+}
+
+class RatingSkeletons extends StatelessWidget {
+  const RatingSkeletons({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8.0),
+      elevation: 4,
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        //mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const ListTile(
+            leading: SkeletonAvatar(
+              style: SkeletonAvatarStyle(
+                  shape: BoxShape.circle,
+                  width: 45,
+                  height: 45,
+                  borderRadius: BorderRadius.all(Radius.circular(8))),
+            ),
+            title: SkeletonLine(
+              style: SkeletonLineStyle(
+                  height: 14,
+                  width: 200,
+                  borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                  alignment: Alignment.centerLeft),
+            ),
+            subtitle: SkeletonLine(
+              style: SkeletonLineStyle(
+                  height: 12,
+                  width: 150,
+                  borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                  alignment: Alignment.centerLeft),
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(16.0, 0.0, 0.0, 16.0),
+            height: 30,
+            child: const SkeletonLine(
+              style: SkeletonLineStyle(
+                  height: 12,
+                  width: 150,
+                  borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                  alignment: Alignment.centerLeft),
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: SkeletonLine(
+              style: SkeletonLineStyle(
+                  height: 12,
+                  width: 150,
+                  borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                  alignment: Alignment.centerLeft),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
+            child: SkeletonParagraph(
+              style: SkeletonParagraphStyle(
+                  padding: EdgeInsets.zero,
+                  lines: 2,
+                  lineStyle: SkeletonLineStyle(
+                    randomLength: true,
+                    height: 14,
+                    borderRadius: BorderRadius.circular(8),
+                    minLength: MediaQuery.of(context).size.width / 2,
+                    maxLength: MediaQuery.of(context).size.width,
+                  )),
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

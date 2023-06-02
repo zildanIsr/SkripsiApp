@@ -112,17 +112,29 @@ class OnMapViewState extends State<OnMapView> {
       var responses = await ac.addNewAddress(data);
       if (responses >= 400 && responses < 500) {
         return Get.snackbar("Error", "Gagal menambahkan alamat",
+            messageText: const Text(
+              "Gagal menambahkan alamat",
+              style: TextStyle(fontSize: 16, color: Colors.white),
+            ),
             colorText: Colors.white,
             snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.red.shade300);
       } else if (responses >= 500) {
         return Get.snackbar("Error", "Server Error",
+            messageText: const Text(
+              "Server Error",
+              style: TextStyle(fontSize: 16, color: Colors.white),
+            ),
             colorText: Colors.white,
             snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.red.shade300);
       } else if (responses == 201) {
         Get.back();
-        return Get.snackbar("Success", "Berhasil menambahkan alamat",
+        return Get.snackbar("Success", '',
+            messageText: const Text(
+              "Berhasil menambahkan alamat",
+              style: TextStyle(fontSize: 16, color: Colors.white),
+            ),
             colorText: Colors.white,
             snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.green.shade300);

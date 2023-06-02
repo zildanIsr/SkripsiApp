@@ -285,13 +285,13 @@ class _ArticleDescription extends StatelessWidget {
                                       oc.onSubmit(strNumber, category,
                                           categoryId, price, productId);
                                     },
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0),
+                                    child: const Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 8.0),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
-                                        children: const [
+                                        children: [
                                           Text(
                                             'Lanjut',
                                             style: TextStyle(fontSize: 16.0),
@@ -345,6 +345,7 @@ class PerawatListItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Card(
+        color: Colors.white12,
         elevation: 0.0,
         clipBehavior: Clip.hardEdge,
         child: InkWell(
@@ -357,7 +358,7 @@ class PerawatListItem extends StatelessWidget {
             }));
           }),
           child: SizedBox(
-            height: 130,
+            height: 140,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -394,13 +395,10 @@ class PerawatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      //padding: const EdgeInsets.all(10.0),
-      children: <Widget>[
+      padding: EdgeInsets.zero,
+      children: const <Widget>[
         PerawatListItem(
-          thumbnail: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10), color: Colors.blue),
-          ),
+          thumbnail: Image(image: AssetImage('assets/nurse-boy-128.png')),
           name: 'Zildan Isrezkinurahman',
           category: 'Sp Sakit Jiwa.',
           price: 20000,
@@ -410,10 +408,7 @@ class PerawatCard extends StatelessWidget {
           productId: 1,
         ),
         PerawatListItem(
-          thumbnail: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10), color: Colors.red),
-          ),
+          thumbnail: Image(image: AssetImage('assets/nurse-boy-128.png')),
           name: 'Zildan Isrezkinurahman',
           category: 'Sp Sakit Jiwa.',
           price: 20000,

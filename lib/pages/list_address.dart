@@ -22,7 +22,7 @@ class ListAddress extends StatelessWidget {
                   ? const Center(
                       child: Text(
                         "Belum ada alamat",
-                        style: TextStyle(fontSize: 24),
+                        style: TextStyle(fontSize: 18),
                       ),
                     )
                   : const Address(),
@@ -63,6 +63,7 @@ class Address extends StatelessWidget {
                       "${ac.addressbyUser[item].street}, ${ac.addressbyUser[item].sublocality}, ${ac.addressbyUser[item].locality}, ${ac.addressbyUser[item].subadminisArea}, ${ac.addressbyUser[item].adminisArea} ${ac.addressbyUser[item].postalCode}, ${ac.addressbyUser[item].country}",
                   seleceted: ac.selectedAddress.value,
                   value: ac.addressbyUser[item].id!,
+                  id: ac.addressbyUser[item].id!,
                 ));
           },
           separatorBuilder: (context, index) {
@@ -82,15 +83,44 @@ class Item extends StatelessWidget {
       {super.key,
       required this.address,
       required this.seleceted,
-      required this.value});
+      required this.value,
+      required this.id});
 
   final String address;
   final int seleceted;
   final int value;
+  final int id;
 
   @override
   Widget build(BuildContext context) {
     AddressController ac = Get.find<AddressController>();
+
+    showExitPopup() async {
+      return await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Menghapus Alamat'),
+              content: const Text('Apa kamu yakin menghapus alamat ini?'),
+              actions: [
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.pink)),
+                  onPressed: () {
+                    ac.deletedAddress(id);
+                    Navigator.of(context).pop(true);
+                  },
+                  child: const Text('Iya'),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('Tidak'),
+                ),
+              ],
+            ),
+          ) ??
+          false; //if showDialouge had returned null, then return false
+    }
+
     return Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         width: double.infinity,
@@ -120,7 +150,10 @@ class Item extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 ElevatedButton(
-                    onPressed: () {}, child: const Text('Hapus alamat')),
+                    onPressed: () {
+                      showExitPopup();
+                    },
+                    child: const Text('Hapus alamat')),
               ],
             ),
           ),

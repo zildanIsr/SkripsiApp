@@ -9,9 +9,9 @@ class CustomMarker extends StatelessWidget {
       color: Colors.amber,
       width: 100,
       height: 100,
-      child: Column(
+      child: const Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: const <Widget>[
+        children: <Widget>[
           CircleAvatar(
             radius: 35,
             backgroundColor: Colors.blue,

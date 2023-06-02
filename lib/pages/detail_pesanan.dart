@@ -52,24 +52,25 @@ class DetailOrderView extends StatelessWidget {
           false; //if showDialouge had returned null, then return false
     }
 
+    AuthController ac = Get.find();
+    OrderFormController ofc = Get.find();
     NurseController nc = Get.put(NurseController());
-    AuthController ac = Get.put(AuthController());
+    nc.getNurseDatabySTR(ofc.order.value.strNumber);
+
     FloatButtoncontroller bc = Get.put(FloatButtoncontroller());
     OrderConfirm oc = Get.put(OrderConfirm());
-    OrderFormController ofc = Get.put(OrderFormController());
-    nc.getNurseDatabySTR(ofc.order.value.strNumber);
 
     createNewOrder(Order data) {
       //debugPrint('Name: ${data.name}, Password: ${data.password}');
       return Future.delayed(const Duration(seconds: 3)).then((_) async {
         var responses = await oc.addNewOrder(data);
         if (responses >= 400 && responses < 500) {
-          return Get.snackbar("Error", "Gagal menambahkan alamat",
+          return Get.snackbar("Error", "Gagal menambahkan pesanan",
               colorText: Colors.white,
               snackPosition: SnackPosition.TOP,
               backgroundColor: Colors.red.shade300);
         } else if (responses >= 500) {
-          return Get.snackbar("Error", "Gagal menambahkan alamat",
+          return Get.snackbar("Error", "Gagal menambahkan pesanan",
               colorText: Colors.white,
               snackPosition: SnackPosition.TOP,
               backgroundColor: Colors.red.shade300);
@@ -193,9 +194,9 @@ class PriceDetail extends StatelessWidget {
           const SizedBox(
             height: 16.0,
           ),
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text(
                 'Pembayaran',
                 style: TextStyle(
@@ -252,9 +253,9 @@ class PriceDetail extends StatelessWidget {
           const SizedBox(
             height: 8.0,
           ),
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text(
                 'Fee Transportasi',
                 style: TextStyle(

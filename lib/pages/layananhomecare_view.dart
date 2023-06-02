@@ -21,7 +21,7 @@ class LayananHomecareView extends StatelessWidget {
           child: IconButton(
               onPressed: () {
                 Get.defaultDialog(
-                    title: 'Layanan',
+                    title: 'Tambah Layanan',
                     titlePadding: const EdgeInsets.only(top: 16.0),
                     titleStyle: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 24),
@@ -30,6 +30,7 @@ class LayananHomecareView extends StatelessWidget {
                       child: ElevatedButton(
                           onPressed: () {
                             pc.addNewProduct();
+                            Navigator.of(context).pop(true);
                           },
                           child: const Text('Tambah')),
                     ),
@@ -48,64 +49,90 @@ class LayananHomecareView extends StatelessWidget {
                           )),
                     ),
                     content: Container(
-                      width: MediaQuery.of(context).size.width * 0.7,
-                      //height: 140,
-                      padding: const EdgeInsets.all(8.0),
+                      width: MediaQuery.of(context).size.width,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 8.0),
                       //color: Colors.amber,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const <Widget>[
-                              Text(
-                                'Pilih Kategori',
-                                style: TextStyle(
-                                  fontSize: 18,
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 32.0),
+                            child: Column(
+                              children: [
+                                const Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text(
+                                      'Pilih Kategori',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 4.0,
+                                    ),
+                                    DropdownKategori(),
+                                  ],
                                 ),
-                              ),
-                              SizedBox(
-                                width: 4.0,
-                              ),
-                              DropdownKategori(),
-                            ],
+                                const SizedBox(
+                                  height: 16.0,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    const Text(
+                                      'Harga Layanan',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 8.0,
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12.0),
+                                        child: TextField(
+                                          decoration: const InputDecoration(
+                                            isDense: true,
+                                            prefixIcon: Text(" Rp  "),
+                                            prefixIconConstraints:
+                                                BoxConstraints(
+                                                    minWidth: 0, minHeight: 0),
+                                          ),
+                                          keyboardType: TextInputType.number,
+                                          onChanged: (value) {
+                                            pc.setPrice(int.parse(value));
+                                          },
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                           const SizedBox(
-                            height: 16.0,
+                            height: 24,
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              const Text(
-                                'Harga Layanan',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 8.0,
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12.0),
-                                  child: TextField(
-                                    decoration: const InputDecoration(
-                                      isDense: true,
-                                      prefixIcon: Text(" Rp  "),
-                                      prefixIconConstraints: BoxConstraints(
-                                          minWidth: 0, minHeight: 0),
-                                    ),
-                                    keyboardType: TextInputType.number,
-                                    onChanged: (value) {
-                                      pc.setPrice(int.parse(value));
-                                    },
-                                  ),
-                                ),
-                              )
-                            ],
+                          const Text(
+                            'Keterangan',
+                            style: TextStyle(fontWeight: FontWeight.w500),
                           ),
+                          const Text('1. Batas layanan terdaftar sebanyak 5',
+                              style: TextStyle(fontSize: 14)),
+                          const Text(
+                              '2. Tidak dapat mendaftar kategori yang sama',
+                              style: TextStyle(fontSize: 14)),
+                          const Text(
+                              '3. Harga layanan sudah dengan jasa dan peralatan',
+                              style: TextStyle(fontSize: 14))
                         ],
                       ),
                     ));
@@ -138,6 +165,7 @@ class LayananHomecareView extends StatelessWidget {
                           categoryId: pc.myProduct[index].categoryId,
                           price: pc.myProduct[index].price,
                           status: pc.myProduct[index].status,
+                          id: pc.myProduct[index].id,
                         );
                       }),
                 )),

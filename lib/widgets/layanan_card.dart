@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/Controllers/product_controller.dart';
 import 'package:flutter_application_1/widgets/status_widget.dart';
 import 'package:get/get.dart';
 
 import '../Controllers/category_controller.dart';
 import '../Models/kategori_model.dart';
+import 'dropdown_list.dart';
 
 class ListLayananCard extends StatelessWidget {
   const ListLayananCard({
@@ -11,16 +13,157 @@ class ListLayananCard extends StatelessWidget {
     required this.categoryId,
     required this.price,
     required this.status,
+    required this.id,
   });
 
   final int categoryId;
   final int price;
   final int status;
+  final int id;
 
   @override
   Widget build(BuildContext context) {
     CategoryController cc = Get.put(CategoryController());
     Kategori category = cc.getCategory(categoryId);
+    ProductController pc = Get.find();
+
+    showExitPopup() async {
+      return await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Menghapus Layanan'),
+              content: const Text('Apa kamu yakin menghapus layanan ini?'),
+              actions: [
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.pink)),
+                  onPressed: () {
+                    pc.deleteProduct(id);
+                    Navigator.of(context).pop(true);
+                  },
+                  child: const Text('Iya'),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('Tidak'),
+                ),
+              ],
+            ),
+          ) ??
+          false; //if showDialouge had returned null, then return false
+    }
+
+    showDialogEdit() async {
+      return await Get.defaultDialog(
+          title: 'Edit Layanan',
+          titlePadding: const EdgeInsets.only(top: 16.0),
+          titleStyle:
+              const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+          confirm: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: ElevatedButton(
+                onPressed: () {
+                  //pc.addNewProduct();
+                  Navigator.of(context).pop(true);
+                },
+                child: const Text('Tambah')),
+          ),
+          cancel: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Colors.pink.shade400)),
+                onPressed: () {
+                  Get.back();
+                },
+                child: const Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 8.0, vertical: 10.0),
+                  child: Text('Batal'),
+                )),
+          ),
+          content: Container(
+            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+            //color: Colors.amber,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                  child: Column(
+                    children: [
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            'Pilih Kategori',
+                            style: TextStyle(
+                              fontSize: 18,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 4.0,
+                          ),
+                          DropdownKategori(),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 16.0,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          const Text(
+                            'Harga Layanan',
+                            style: TextStyle(
+                              fontSize: 18,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 8.0,
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12.0),
+                              child: TextField(
+                                decoration: const InputDecoration(
+                                  isDense: true,
+                                  prefixIcon: Text(" Rp  "),
+                                  prefixIconConstraints:
+                                      BoxConstraints(minWidth: 0, minHeight: 0),
+                                ),
+                                keyboardType: TextInputType.number,
+                                onChanged: (value) {
+                                  pc.setPrice(int.parse(value));
+                                },
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 24,
+                ),
+                const Text(
+                  'Keterangan',
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+                const Text('1. Batas layanan terdaftar sebanyak 5',
+                    style: TextStyle(fontSize: 14)),
+                const Text('2. Tidak dapat mendaftar kategori yang sama',
+                    style: TextStyle(fontSize: 14)),
+                const Text('3. Harga layanan sudah dengan jasa dan peralatan',
+                    style: TextStyle(fontSize: 14))
+              ],
+            ),
+          ));
+    }
 
     return Container(
       //color: Colors.amber,
@@ -100,13 +243,19 @@ class ListLayananCard extends StatelessWidget {
                       OutlinedButton(
                           style: OutlinedButton.styleFrom(
                               side: BorderSide(color: Colors.pink.shade400)),
-                          onPressed: () {},
+                          onPressed: () {
+                            showExitPopup();
+                          },
                           child: const Text('Delete')),
                       const SizedBox(
                         width: 8.0,
                       ),
                       ElevatedButton(
-                          onPressed: () {}, child: const Text('Edit'))
+                          onPressed: () {
+                            pc.selectedCategory.value = categoryId;
+                            showDialogEdit();
+                          },
+                          child: const Text('Edit'))
                     ],
                   )
                 ],

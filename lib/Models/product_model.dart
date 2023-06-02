@@ -21,9 +21,9 @@ class Product {
   int orderedAmount;
   DateTime createdAt;
   DateTime updatedAt;
-  User? user;
-  Category? category;
-  Perawat? perawat;
+  User user;
+  Category category;
+  Perawat perawat;
 
   Product({
     required this.id,
@@ -36,9 +36,9 @@ class Product {
     required this.orderedAmount,
     required this.createdAt,
     required this.updatedAt,
-    this.user,
-    this.category,
-    this.perawat,
+    required this.user,
+    required this.category,
+    required this.perawat,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) => Product(
@@ -65,11 +65,12 @@ class Product {
         "categoryId": categoryId,
         "perawatId": perawatId,
         "userId": userId,
+        "orderedAmount": orderedAmount,
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),
-        "User": user!.toJson(),
-        "Category": category!.toJson(),
-        "Perawat": perawat!.toJson(),
+        "User": user.toJson(),
+        "Category": category.toJson(),
+        "Perawat": perawat.toJson(),
       };
 }
 
@@ -90,18 +91,33 @@ class Category {
 }
 
 class Perawat {
+  int? id;
   String strNumber;
+  double? rating;
+  List<dynamic>? ratings;
 
   Perawat({
+    required this.id,
     required this.strNumber,
+    required this.rating,
+    this.ratings,
   });
 
   factory Perawat.fromJson(Map<String, dynamic> json) => Perawat(
+        id: json["id"],
         strNumber: json["strNumber"],
+        rating: json["Rating"]?.toDouble(),
+        ratings: json["Ratings"] == null
+            ? []
+            : List<dynamic>.from(json["Ratings"]!.map((x) => x)),
       );
 
   Map<String, dynamic> toJson() => {
+        "id": id,
         "strNumber": strNumber,
+        "Rating": rating,
+        "Ratings":
+            ratings == null ? [] : List<dynamic>.from(ratings!.map((x) => x)),
       };
 }
 

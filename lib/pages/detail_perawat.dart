@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../Controllers/nurse_data.dart';
+import '../Controllers/rating_controller.dart';
 import '../widgets/skeleton.dart';
 import '../widgets/workrate.dart';
 import 'detail_rating_view.dart';
@@ -71,6 +72,8 @@ class DetailPerawat extends StatelessWidget {
                       timeOp: nc.singleNurse.timeRange,
                       amountProduct: nc.singleNurse.products!.length.toString(),
                       amountOrder: nc.singleNurse.orders!.length.toString(),
+                      nurseId: nc.singleNurse.id!,
+                      rate: nc.rating.value,
                     ),
         ));
   }
@@ -88,7 +91,9 @@ class ProfileDetail extends StatelessWidget {
       required this.timeOp,
       required this.education,
       required this.amountProduct,
-      required this.amountOrder});
+      required this.amountOrder,
+      required this.nurseId,
+      required this.rate});
 
   final double bodyHeight;
   final double mediaQueryWidht;
@@ -100,9 +105,12 @@ class ProfileDetail extends StatelessWidget {
   final List education;
   final String amountProduct;
   final String amountOrder;
+  final int nurseId;
+  final double rate;
 
   @override
   Widget build(BuildContext context) {
+    RatingController rc = Get.put(RatingController());
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -164,10 +172,11 @@ class ProfileDetail extends StatelessWidget {
                       child: InkWell(
                         splashColor: Colors.pink.shade200,
                         onTap: () {
+                          rc.getAllTestimoni(nurseId, null);
                           Get.to(() => const DetailRating());
                         },
                         child: Container(
-                          width: mediaQueryWidht * 0.7,
+                          width: mediaQueryWidht,
                           height: 90,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8.0, vertical: 16.0),
@@ -212,7 +221,7 @@ class ProfileDetail extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
+                                  children: [
                                     // Text(
                                     //   'Rating',
                                     //   textAlign: TextAlign.center,
@@ -222,13 +231,13 @@ class ProfileDetail extends StatelessWidget {
                                     //       fontWeight: FontWeight.w500),
                                     // ),
                                     RatingNurse(
-                                        sizeIcon: 20,
+                                        sizeIcon: 22,
                                         alignSelected: MainAxisAlignment.center,
-                                        rate: "4.8"),
-                                    SizedBox(
-                                      height: 4.0,
+                                        rate: rate.toString()),
+                                    const SizedBox(
+                                      height: 2.0,
                                     ),
-                                    Text(
+                                    const Text(
                                       '  Rating',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
@@ -353,8 +362,8 @@ class NurseDetailInformation extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Row(
-                      children: const [
+                    const Row(
+                      children: [
                         Icon(Icons.account_balance_rounded),
                         SizedBox(
                           width: 8.0,
@@ -391,8 +400,8 @@ class NurseDetailInformation extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: const [
+                        const Row(
+                          children: [
                             Icon(Icons.work_outline),
                             SizedBox(
                               width: 8.0,
@@ -422,8 +431,8 @@ class NurseDetailInformation extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: const [
+                        const Row(
+                          children: [
                             Icon(Icons.health_and_safety_outlined),
                             SizedBox(
                               width: 4.0,
@@ -491,9 +500,9 @@ class OperasionalTime extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Row(
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         Icon(Icons.date_range_rounded, color: Colors.green),
                         SizedBox(
                           width: 8.0,
@@ -531,9 +540,9 @@ class OperasionalTime extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Row(
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         Icon(
                           Icons.access_time_rounded,
                           color: Colors.green,

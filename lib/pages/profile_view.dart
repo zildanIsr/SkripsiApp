@@ -4,6 +4,10 @@ import 'package:flutter_application_1/pages/auth_view.dart';
 import 'package:flutter_application_1/pages/detail_pengguna.dart';
 import 'package:get/get.dart';
 
+import 'package:image_picker/image_picker.dart';
+
+import 'dart:io';
+
 import '../Controllers/auth.dart';
 import '../Controllers/nurse_data.dart';
 import 'detail_perawat.dart';
@@ -30,6 +34,7 @@ class AccountSetting extends StatelessWidget {
 
     final bodyHeight = mediaQueryHeight - MediaQuery.of(context).padding.top;
 
+    AuthController ac = Get.find();
     return Center(
       child: SizedBox(
         width: mediaQueryWidht,
@@ -41,28 +46,15 @@ class AccountSetting extends StatelessWidget {
                 width: double.infinity,
                 height: bodyHeight * 0.25,
                 decoration: BoxDecoration(
-                    color: Colors.green.shade300,
+                    color: ac.user.roleId == 1
+                        ? Colors.green.shade300
+                        : Colors.pink.shade400,
                     borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(150),
                         bottomRight: Radius.circular(150))),
               ),
             ),
-            const Positioned(
-              left: 50,
-              right: 50,
-              top: 110,
-              child: CircleAvatar(
-                backgroundColor: Colors.greenAccent,
-                radius: 80,
-                child: CircleAvatar(
-                  backgroundColor: Colors.transparent,
-                  backgroundImage: AssetImage(
-                    'assets/doctor.png',
-                  ),
-                  radius: 70,
-                ),
-              ),
-            ),
+            const ImageCircle(),
             ProfileCard(
               bodyHeight: bodyHeight,
               mediaQueryWidht: mediaQueryWidht,
@@ -73,6 +65,75 @@ class AccountSetting extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class ImageCircle extends StatefulWidget {
+  const ImageCircle({
+    super.key,
+  });
+
+  @override
+  State<ImageCircle> createState() => _ImageCircleState();
+}
+
+class _ImageCircleState extends State<ImageCircle> {
+  final ImagePicker _imagePicker = ImagePicker();
+  XFile? _pickedImage;
+
+  UserController uc = Get.put(UserController());
+
+  Future<void> _pickImage() async {
+    final XFile? pickedImage =
+        await _imagePicker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      uc.uploadImage(File(pickedImage.path));
+    }
+
+    setState(() {
+      _pickedImage = pickedImage;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: 85,
+      left: 0,
+      right: 0,
+      child: Stack(
+          alignment: AlignmentDirectional.center,
+          clipBehavior: Clip.none,
+          children: [
+            CircleAvatar(
+              backgroundColor: Colors.white,
+              radius: 75,
+              child: CircleAvatar(
+                backgroundColor: Colors.greenAccent,
+                backgroundImage: _pickedImage != null
+                    ? FileImage(File(_pickedImage!.path))
+                    : const AssetImage('assets/doctor.png')
+                        as ImageProvider<Object>?,
+                radius: 70,
+              ),
+            ),
+            Positioned(
+              bottom: -15,
+              child: CircleAvatar(
+                radius: 22,
+                backgroundColor: Colors.green.shade200,
+                child: IconButton(
+                    iconSize: 22,
+                    onPressed: () {
+                      //print('ontap');
+                      _pickImage();
+                    },
+                    icon: const Icon(Icons.edit)),
+              ),
+            ),
+          ]),
     );
   }
 }
@@ -92,7 +153,7 @@ class ProfileCard extends StatelessWidget {
     AuthController user = Get.find();
 
     return Positioned(
-        top: 270,
+        top: 250,
         left: 0,
         right: 0,
         child: Container(
@@ -122,11 +183,13 @@ class ProfileCard extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           child: Text(
-                            'PASIEN',
+                            user.user.roleId == 1 ? 'PASIEN' : 'PERAWAT',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 letterSpacing: 2,
-                                color: Colors.green.shade500,
+                                color: user.user.roleId == 1
+                                    ? Colors.green.shade500
+                                    : Colors.pinkAccent,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w500),
                           ),
@@ -153,7 +216,7 @@ class ButtonList extends StatelessWidget {
     AuthController ac = Get.find();
 
     return Positioned(
-      bottom: 0,
+      bottom: ac.user.roleId == 2 ? 0 : 30,
       left: 8,
       right: 8,
       child: SizedBox(
@@ -175,11 +238,11 @@ class ButtonList extends StatelessWidget {
                             Get.put(UserController());
                           }));
                         },
-                        child: Row(
+                        child: const Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Row(
-                              children: const [
+                              children: [
                                 Icon(
                                   Icons.account_circle_rounded,
                                 ),
@@ -193,7 +256,7 @@ class ButtonList extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            const Icon(
+                            Icon(
                               Icons.arrow_forward_outlined,
                             ),
                           ],
@@ -211,12 +274,12 @@ class ButtonList extends StatelessWidget {
                                       Get.put(NurseController());
                                     }));
                                   },
-                                  child: Row(
+                                  child: const Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Row(
-                                        children: const [
+                                        children: [
                                           Icon(
                                             Icons.person_4_rounded,
                                           ),
@@ -231,7 +294,7 @@ class ButtonList extends StatelessWidget {
                                           ),
                                         ],
                                       ),
-                                      const Icon(
+                                      Icon(
                                         Icons.arrow_forward_outlined,
                                       ),
                                     ],
@@ -244,11 +307,11 @@ class ButtonList extends StatelessWidget {
                         onPressed: () {
                           Get.toNamed('/edit-profil');
                         },
-                        child: Row(
+                        child: const Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Row(
-                              children: const [
+                              children: [
                                 Icon(
                                   Icons.edit,
                                 ),
@@ -262,7 +325,7 @@ class ButtonList extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            const Icon(
+                            Icon(
                               Icons.arrow_forward_outlined,
                             ),
                           ],
@@ -275,12 +338,12 @@ class ButtonList extends StatelessWidget {
                                   onPressed: () {
                                     Get.toNamed('/regis-perawat');
                                   },
-                                  child: Row(
+                                  child: const Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Row(
-                                        children: const [
+                                        children: [
                                           Icon(
                                             Icons.app_registration,
                                           ),
@@ -295,7 +358,7 @@ class ButtonList extends StatelessWidget {
                                           ),
                                         ],
                                       ),
-                                      const Icon(
+                                      Icon(
                                         Icons.arrow_forward_outlined,
                                       ),
                                     ],
@@ -311,12 +374,12 @@ class ButtonList extends StatelessWidget {
                                   onPressed: () {
                                     Get.toNamed('/layanan-hc');
                                   },
-                                  child: Row(
+                                  child: const Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Row(
-                                        children: const [
+                                        children: [
                                           Icon(
                                             Icons.medical_services,
                                           ),
@@ -331,7 +394,7 @@ class ButtonList extends StatelessWidget {
                                           ),
                                         ],
                                       ),
-                                      const Icon(
+                                      Icon(
                                         Icons.arrow_forward_outlined,
                                       ),
                                     ],
@@ -344,11 +407,11 @@ class ButtonList extends StatelessWidget {
                         onPressed: () {
                           Get.toNamed('/address-user');
                         },
-                        child: Row(
+                        child: const Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Row(
-                              children: const [
+                              children: [
                                 Icon(
                                   Icons.bookmark,
                                 ),
@@ -362,7 +425,7 @@ class ButtonList extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            const Icon(
+                            Icon(
                               Icons.arrow_forward_outlined,
                             ),
                           ],
@@ -375,12 +438,13 @@ class ButtonList extends StatelessWidget {
                 child: TextButton(
                   onPressed: () {
                     ac.logout();
+                    Get.deleteAll();
                     Get.offAll(() => AuthView());
                   },
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
-                    children: const [
+                    children: [
                       Icon(
                         Icons.logout,
                       ),
@@ -397,169 +461,6 @@ class ButtonList extends StatelessWidget {
               )
             ],
           )),
-    );
-  }
-}
-
-//==========================================================================//
-//Nurse Profile//
-
-class NurseProfile extends StatelessWidget {
-  const NurseProfile({
-    super.key,
-    required this.bodyHeight,
-    required this.mediaQueryWidht,
-  });
-
-  final double bodyHeight;
-  final double mediaQueryWidht;
-
-  @override
-  Widget build(BuildContext context) {
-    AuthController ac = Get.find<AuthController>();
-    return Center(
-      child: SizedBox(
-        width: double.infinity,
-        height: double.infinity,
-        //color: Colors.amber,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              height: bodyHeight * 0.4,
-              width: mediaQueryWidht,
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.redAccent,
-                  Colors.pink.shade400,
-                ],
-              )),
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: <Widget>[
-                  Positioned(
-                    left: 50,
-                    right: 50,
-                    top: 70,
-                    child: Column(
-                      children: [
-                        const CircleAvatar(
-                          backgroundColor: Colors.greenAccent,
-                          radius: 70,
-                          child: CircleAvatar(
-                            backgroundColor: Colors.transparent,
-                            backgroundImage: AssetImage(
-                              'assets/doctor.png',
-                            ),
-                            radius: 60,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 16.0,
-                        ),
-                        Text(
-                          ac.user.name,
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white),
-                        )
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                      bottom: -50,
-                      left: 100,
-                      right: 100,
-                      child: Card(
-                        elevation: 4.0,
-                        child: Container(
-                          //width: mediaQueryWidht * 0.7,
-                          //color: Colors.blue,
-                          height: 90,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 16.0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: <Widget>[
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Text(
-                                      '9',
-                                      style: TextStyle(
-                                          fontSize: 16.0,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    const SizedBox(
-                                      height: 8.0,
-                                    ),
-                                    const Text(
-                                      'Layanan',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 16.0,
-                                          color: Colors.black38,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Text(
-                                      '1',
-                                      style: TextStyle(
-                                          fontSize: 16.0,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    const SizedBox(
-                                      height: 8.0,
-                                    ),
-                                    const Text(
-                                      'Pesanan',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 16.0,
-                                          color: Colors.black38,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )),
-                ],
-              ),
-            ),
-            Container(
-              height: bodyHeight * 0.55,
-              width: double.infinity,
-              alignment: Alignment.bottomCenter,
-              //color: Colors.blue,
-              child: ButtonList(
-                mediaQueryWidht: mediaQueryWidht,
-              ),
-            )
-          ],
-        ),
-      ),
     );
   }
 }

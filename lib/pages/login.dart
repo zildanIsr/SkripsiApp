@@ -14,14 +14,14 @@ class Login extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             //Header
-            Expanded(
+            const Expanded(
               flex: 1,
               child: SizedBox(
                 width: double.infinity,
                 //color: Colors.amber,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
-                  children: const <Widget> [
+                  children: <Widget> [
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: Text('Selamat Datang Kembali', maxLines: 2, style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),),
@@ -35,19 +35,19 @@ class Login extends StatelessWidget {
               )
             ),
             //Login_Form
-            Expanded(
+            const Expanded(
               flex: 2,
               child: SizedBox(
                 width: double.infinity,
                 //color: Colors.blueAccent,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Card(
                     elevation: 8.0,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      children: const <Widget> [
+                      children: <Widget> [
                         Padding(
                           padding: EdgeInsets.all(8),
                           child: Text("Login", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),),

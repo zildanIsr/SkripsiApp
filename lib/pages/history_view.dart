@@ -66,9 +66,14 @@ class _HistoryViewState extends State<HistoryView>
                 hc.isLoading.value
                     ? const HistoryCardSkeleton()
                     : hc.listHistory.isEmpty
-                        ? const Center(
-                            child: Text('Belum ada history',
-                                style: TextStyle(fontSize: 18)))
+                        ? RefreshIndicator(
+                            onRefresh: () async {
+                              hc.refreshData();
+                            },
+                            child: const Center(
+                                child: Text('Belum ada history',
+                                    style: TextStyle(fontSize: 18))),
+                          )
                         : RefreshIndicator(
                             onRefresh: () async {
                               hc.refreshData();
@@ -91,15 +96,22 @@ class _HistoryViewState extends State<HistoryView>
                                     isFinished:
                                         hc.listHistory[index].isFinished,
                                     id: hc.listHistory[index].id,
+                                    isRated: hc.listHistory[index].isRated,
+                                    perawatId: hc.listHistory[index].perawatId,
                                   );
                                 })),
                           ),
                 hc.isLoading.value
                     ? const HistoryCardSkeleton()
                     : hc.listFinished.isEmpty
-                        ? const Center(
-                            child: Text('Belum ada history',
-                                style: TextStyle(fontSize: 18)))
+                        ? RefreshIndicator(
+                            onRefresh: () async {
+                              hc.refreshData();
+                            },
+                            child: const Center(
+                                child: Text('Belum ada history',
+                                    style: TextStyle(fontSize: 18))),
+                          )
                         : RefreshIndicator(
                             onRefresh: () async {
                               hc.refreshData();
@@ -123,6 +135,8 @@ class _HistoryViewState extends State<HistoryView>
                                     isFinished:
                                         hc.listFinished[index].isFinished,
                                     id: hc.listFinished[index].id,
+                                    isRated: hc.listFinished[index].isRated,
+                                    perawatId: hc.listFinished[index].perawatId,
                                   );
                                 })),
                           )

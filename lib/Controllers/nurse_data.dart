@@ -9,6 +9,7 @@ class NurseController extends GetxController {
   var isError = false.obs;
   //var str = ''.obs;
   var errmsg = "".obs;
+  var rating = 0.0.obs;
 
   late Nurse singleNurse;
 
@@ -19,6 +20,9 @@ class NurseController extends GetxController {
 
       final response = await http.get(url);
       final nurseData = json.decode(response.body)['data'];
+      var rate = json.decode(response.body)['rating'] ?? 0.0;
+
+      rating.value = rate.toDouble();
 
       if (nurseData == null) {
         //print('data tidak ditemukan');

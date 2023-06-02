@@ -31,8 +31,6 @@ class DetailHistory extends StatelessWidget {
 
     hc.getDetailHistory(id!);
 
-    const int isOrderComplete = 0;
-
     return Scaffold(
       appBar: myAppbar,
       body: Obx(
@@ -47,8 +45,7 @@ class DetailHistory extends StatelessWidget {
                 ? const Center(
                     child: Text('Error'),
                   )
-                : DetailDataOrder(
-                    bodyHeight: bodyHeight, isOrderComplete: isOrderComplete),
+                : DetailDataOrder(bodyHeight: bodyHeight),
       ),
     );
   }
@@ -58,11 +55,9 @@ class DetailDataOrder extends StatelessWidget {
   const DetailDataOrder({
     super.key,
     required this.bodyHeight,
-    required this.isOrderComplete,
   });
 
   final double bodyHeight;
-  final int isOrderComplete;
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +96,7 @@ class DetailDataOrder extends StatelessWidget {
               initialRating: 3,
               minRating: 1,
               direction: Axis.horizontal,
-              allowHalfRating: true,
+              allowHalfRating: false,
               itemCount: 5,
               itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
               itemBuilder: (context, _) => const Icon(
@@ -135,6 +130,55 @@ class DetailDataOrder extends StatelessWidget {
       ));
     }
 
+    void popReport() {
+      Get.bottomSheet(Container(
+        width: MediaQuery.of(context).size.width,
+        height: 230.0,
+        padding: const EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 0.0),
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+          color: Colors.white,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text(
+              'Laporkan Layanan',
+              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(
+              height: 8.0,
+            ),
+            const Text(
+              'Mengapa anda melaporkan layanan ini?',
+              style: TextStyle(fontSize: 16.0),
+            ),
+            const SizedBox(
+              height: 8.0,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: TextFormField(
+                maxLines: 2,
+              ),
+            ),
+            const SizedBox(
+              height: 16.0,
+            ),
+            Container(
+                width: double.infinity,
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: ElevatedButton(
+                    onPressed: () {}, child: const Text('Kirim')))
+          ],
+        ),
+      ));
+    }
+
     CategoryController cc = Get.put(CategoryController());
     Kategori category = cc.getCategory(hc.detailhistory.product.categoryId);
 
@@ -151,6 +195,7 @@ class DetailDataOrder extends StatelessWidget {
           statusorder: hc.detailhistory.status,
           dateTimeOrder: hc.detailhistory.jadwalPesanan,
           orderNumber: hc.detailhistory.orderId,
+          isFinished: hc.detailhistory.isFinished,
         ),
         const Divider(
           height: 8,
@@ -188,19 +233,53 @@ class DetailDataOrder extends StatelessWidget {
           height: 4,
           thickness: 4,
         ),
-        isOrderComplete == 1
+        hc.detailhistory.isFinished
             ? Padding(
                 padding:
                     const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    popRate();
-                  },
-                  child: const Text(
-                    "Berikan Ulasan",
-                  ),
-                ),
-              )
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        popReport();
+                      },
+                      child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10.0, vertical: 8.0),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.warning,
+                                size: 14,
+                              ),
+                              SizedBox(
+                                width: 6,
+                              ),
+                              Text(
+                                "Laporkan",
+                              ),
+                            ],
+                          )),
+                    ),
+                    const SizedBox(
+                      width: 12.0,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        popRate();
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 10.0, vertical: 8.0),
+                        child: Text(
+                          "Berikan Ulasan",
+                        ),
+                      ),
+                    ),
+                  ],
+                ))
             : Container()
       ],
     );
@@ -218,6 +297,7 @@ class OrderInformation extends StatelessWidget {
     required this.orderNumber,
     required this.dateTimeOrder,
     required this.iconCategory,
+    required this.isFinished,
   }) : super(key: key);
 
   final String kategoriname;
@@ -228,6 +308,7 @@ class OrderInformation extends StatelessWidget {
   final String orderNumber;
   final DateTime dateTimeOrder;
   final IconData iconCategory;
+  final bool isFinished;
 
   @override
   Widget build(BuildContext context) {
@@ -311,6 +392,11 @@ class OrderInformation extends StatelessWidget {
                             : statusorder == 1
                                 ? Icons.check_circle_outline_outlined
                                 : Icons.error_outline_outlined,
+                        color: statusorder == 1
+                            ? Colors.green
+                            : statusorder == 2
+                                ? Colors.red
+                                : null,
                       ),
                       const SizedBox(
                         width: 6.0,
@@ -318,9 +404,9 @@ class OrderInformation extends StatelessWidget {
                       Text(
                         statusorder == 0
                             ? "Menunggu Konfirmasi"
-                            : statusorder == 1
-                                ? "Selesai"
-                                : "Ditolak",
+                            : statusorder == 1 && isFinished
+                                ? "Pesanan Selesai"
+                                : "Sedang Berjalan",
                         style: const TextStyle(
                             fontSize: 16.0, fontWeight: FontWeight.w500),
                       ),

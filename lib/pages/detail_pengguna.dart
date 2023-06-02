@@ -427,9 +427,9 @@ class ProfileImage extends StatelessWidget {
         //color: Colors.green,
         height: vheight,
         padding: const EdgeInsets.fromLTRB(24.0, 16.0, 24.0, 0.0),
-        child: Column(
+        child: const Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: const <Widget>[
+          children: <Widget>[
             CircleAvatar(
               backgroundColor: Colors.blue,
               radius: 80,

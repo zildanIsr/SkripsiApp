@@ -1,11 +1,12 @@
 import 'dart:async';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import '../Controllers/map_contoller.dart';
+import '../widgets/perawat_card.dart';
+import '../widgets/skeleton.dart';
 
 List<Map<String, dynamic>> datas = [
   {
@@ -33,10 +34,12 @@ class MapsView extends StatefulWidget {
 }
 
 class MapsViewState extends State<MapsView> {
+  MapController mc = Get.put(MapController());
+
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
-  final Map<String, Marker> listMarker = {};
+  final Set<Marker> _markers = <Marker>{};
 
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(-6.200000, 106.816666),
@@ -45,10 +48,110 @@ class MapsViewState extends State<MapsView> {
 
   @override
   void initState() {
-    Future.delayed(const Duration(milliseconds: 100), () {
-      _generateMarkers();
-    });
     super.initState();
+    _generateMarkers();
+  }
+
+  _generateMarkers() async {
+    // BitmapDescriptor markerbitmap = await BitmapDescriptor.fromAssetImage(
+    //   const ImageConfiguration(),
+    //   "assets/nurse.png",
+    // )
+    await mc.getAllNurseAddress();
+    late BitmapDescriptor myIcon;
+
+    await BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(), 'assets/nurse-boy-128.png')
+        .then((onValue) {
+      myIcon = onValue;
+    });
+
+    for (int i = 0; i < mc.position.length; i++) {
+      Marker marker = Marker(
+          markerId: MarkerId(i.toString()),
+          position: LatLng(mc.position[i].addresses.latitude,
+              mc.position[i].addresses.longitude),
+          icon: myIcon,
+          onTap: () {
+            mc.getProduct(mc.position[i].id);
+            Get.bottomSheet(
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.9,
+                  width: MediaQuery.of(context).size.width,
+                  color: Colors.white,
+                  child: Scaffold(
+                      appBar: AppBar(
+                        elevation: 2.0,
+                        leading: IconButton(
+                            onPressed: () {
+                              Get.back();
+                            },
+                            icon: const Icon(
+                              Icons.close,
+                              color: Colors.black,
+                            )),
+                        backgroundColor: Colors.white,
+                      ),
+                      body: Obx(() => mc.isLoading.value
+                          ? const CardSkeleton()
+                          : mc.productPoint.isEmpty
+                              ? const Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.medical_services_outlined,
+                                        color: Colors.black12,
+                                        size: 100,
+                                      ),
+                                      SizedBox(
+                                        height: 8.0,
+                                      ),
+                                      Text(
+                                        "Belum ada layanan",
+                                        style: TextStyle(
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : ListView.builder(
+                                  padding: const EdgeInsets.fromLTRB(
+                                      16.0, 4.0, 16.0, 0),
+                                  shrinkWrap: true,
+                                  itemCount: mc.productPoint.length,
+                                  itemBuilder: (context, index) {
+                                    return PerawatListItem(
+                                      key: ValueKey(mc.productPoint[index].id),
+                                      thumbnail: Card(
+                                        elevation: 2.0,
+                                        child: Image.asset(
+                                          'assets/nurse-boy-128.png',
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                      name: mc.productPoint[index].user.name,
+                                      category:
+                                          mc.productPoint[index].category.name,
+                                      price: mc.productPoint[index].price,
+                                      rating: mc
+                                          .productPoint[index].perawat.rating
+                                          .toString(),
+                                      strNumber: mc.productPoint[index].perawat
+                                          .strNumber,
+                                      categoryId:
+                                          mc.productPoint[index].categoryId,
+                                      productId: mc.productPoint[index].id,
+                                    );
+                                  }))),
+                ),
+                isScrollControlled: true);
+          });
+      setState(() {
+        _markers.add(marker);
+      });
+    }
   }
 
   @override
@@ -61,52 +164,7 @@ class MapsViewState extends State<MapsView> {
       onMapCreated: (GoogleMapController controller) {
         _controller.complete(controller);
       },
-      markers: listMarker.values.toSet(),
+      markers: _markers,
     ));
-  }
-
-  _generateMarkers() async {
-    // BitmapDescriptor markerbitmap = await BitmapDescriptor.fromAssetImage(
-    //   const ImageConfiguration(),
-    //   "assets/nurse.png",
-    // );
-    late BitmapDescriptor myIcon;
-
-    await BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(), 'assets/nurse-boy-128.png')
-        .then((onValue) {
-      myIcon = onValue;
-    });
-
-    for (int i = 0; i < datas.length; i++) {
-      listMarker[i.toString()] = Marker(
-          markerId: MarkerId(i.toString()),
-          position: datas[i]['position'],
-          icon: myIcon,
-          onTap: () {
-            Get.bottomSheet(
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.9,
-                  width: MediaQuery.of(context).size.width,
-                  color: Colors.white,
-                  child: Scaffold(
-                    appBar: AppBar(
-                      leading: IconButton(
-                          onPressed: () {
-                            Get.back();
-                          },
-                          icon: const Icon(
-                            Icons.close,
-                            color: Colors.black,
-                          )),
-                      backgroundColor: Colors.white,
-                      title: const Text('wdwdw'),
-                    ),
-                  ),
-                ),
-                isScrollControlled: true);
-          });
-      setState(() {});
-    }
   }
 }

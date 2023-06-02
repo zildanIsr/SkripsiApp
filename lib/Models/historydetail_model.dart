@@ -19,6 +19,7 @@ class HistoryDetail {
   int totprice;
   int status;
   bool isFinished;
+  bool isRated;
   int pacientAmount;
   DateTime jadwalPesanan;
   DateTime createdAt;
@@ -38,6 +39,7 @@ class HistoryDetail {
     required this.totprice,
     required this.status,
     required this.isFinished,
+    required this.isRated,
     required this.pacientAmount,
     required this.jadwalPesanan,
     required this.createdAt,
@@ -58,6 +60,7 @@ class HistoryDetail {
         totprice: json["totprice"],
         status: json["status"],
         isFinished: json["isFinished"],
+        isRated: json["isRated"],
         pacientAmount: json["pacientAmount"],
         jadwalPesanan: DateTime.parse(json["jadwalPesanan"]),
         createdAt: DateTime.parse(json["createdAt"]),
@@ -78,6 +81,7 @@ class HistoryDetail {
         "totprice": totprice,
         "status": status,
         "isFinished": isFinished,
+        "isRated": isRated,
         "pacientAmount": pacientAmount,
         "jadwalPesanan": jadwalPesanan.toIso8601String(),
         "createdAt": createdAt.toIso8601String(),

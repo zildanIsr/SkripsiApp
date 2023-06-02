@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Controllers/category_controller.dart';
+import 'package:flutter_application_1/Controllers/history_controller.dart';
 import 'package:flutter_application_1/Models/kategori_model.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
@@ -17,7 +18,9 @@ class ItemHistoryPasien extends StatelessWidget {
       required this.userId,
       required this.categoryId,
       required this.isFinished,
-      required this.id});
+      required this.id,
+      required this.isRated,
+      required this.perawatId});
 
   final int id;
   final String orderNumber;
@@ -25,10 +28,15 @@ class ItemHistoryPasien extends StatelessWidget {
   final int statusOrder;
   final int userId;
   final int categoryId;
+  final int perawatId;
   final bool isFinished;
+  final bool isRated;
 
   @override
   Widget build(BuildContext context) {
+    HistoryContoller hc = Get.find();
+    AuthController ac = Get.put(AuthController());
+
     void popRate() {
       Get.bottomSheet(Container(
         width: MediaQuery.of(context).size.width,
@@ -62,7 +70,7 @@ class ItemHistoryPasien extends StatelessWidget {
               initialRating: 3,
               minRating: 1,
               direction: Axis.horizontal,
-              allowHalfRating: true,
+              allowHalfRating: false,
               itemCount: 5,
               itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
               itemBuilder: (context, _) => const Icon(
@@ -70,15 +78,16 @@ class ItemHistoryPasien extends StatelessWidget {
                 color: Colors.amber,
               ),
               onRatingUpdate: (rating) {
-                print(rating);
+                hc.rate.value = rating;
               },
             ),
             const SizedBox(
               height: 16.0,
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: TextField(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: TextFormField(
+                controller: hc.descText,
                 maxLines: 1,
               ),
             ),
@@ -90,7 +99,11 @@ class ItemHistoryPasien extends StatelessWidget {
                 height: 40,
                 padding: const EdgeInsets.symmetric(horizontal: 32.0),
                 child: ElevatedButton(
-                    onPressed: () {}, child: const Text('Kirim')))
+                    onPressed: () {
+                      hc.sendRating(perawatId, id);
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Kirim')))
           ],
         ),
       ));
@@ -229,21 +242,30 @@ class ItemHistoryPasien extends StatelessWidget {
                         ),
                       ],
                     ),
-                    isFinished
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            mainAxisSize: MainAxisSize.max,
-                            children: <Widget>[
-                              ElevatedButton(
-                                  onPressed: () {
-                                    popRate();
-                                  },
-                                  child: const Text('Ulasan'))
-                            ],
-                          )
+                    userId == ac.user.id
+                        ? isFinished && !isRated
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisSize: MainAxisSize.max,
+                                children: <Widget>[
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        popRate();
+                                      },
+                                      child: const Text('Ulasan'))
+                                ],
+                              )
+                            : isFinished && isRated
+                                ? Container()
+                                : ButtonOrder(
+                                    userId: userId,
+                                    status: statusOrder,
+                                    id: id,
+                                  )
                         : ButtonOrder(
-                            roleId: userId,
+                            userId: userId,
                             status: statusOrder,
+                            id: id,
                           )
                   ],
                 ),
@@ -259,42 +281,57 @@ class ItemHistoryPasien extends StatelessWidget {
 class ButtonOrder extends StatelessWidget {
   const ButtonOrder({
     super.key,
-    required this.roleId,
+    required this.userId,
     required this.status,
+    required this.id,
   });
 
-  final int roleId;
+  final int userId;
   final int status;
+  final int id;
 
   @override
   Widget build(BuildContext context) {
-    AuthController ac = Get.put(AuthController());
+    AuthController ac = Get.find();
+    HistoryContoller hc = Get.find();
 
-    return roleId == ac.user.id
+    return userId == ac.user.id
         ? status == 1 || status == 2
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
-                  ElevatedButton(onPressed: () {}, child: const Text('Selesai'))
+                  ElevatedButton(
+                      onPressed: () {
+                        hc.orderFinished(id);
+                      },
+                      child: const Text('Selesai'))
                 ],
               )
             : Container()
-        : Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: Colors.pink.shade400)),
-                  onPressed: () {},
-                  child: const Text('Tolak')),
-              const SizedBox(
-                width: 8.0,
-              ),
-              ElevatedButton(onPressed: () {}, child: const Text('Terima'))
-            ],
-          );
+        : status == 0
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: Colors.pink.shade400)),
+                      onPressed: () {
+                        hc.acceptedOrder(id, 2);
+                      },
+                      child: const Text('Tolak')),
+                  const SizedBox(
+                    width: 8.0,
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        hc.acceptedOrder(id, 1);
+                      },
+                      child: const Text('Terima'))
+                ],
+              )
+            : Container();
   }
 }
 
@@ -321,7 +358,11 @@ class StatusOrder extends StatelessWidget {
                     ? Icons.check_circle_outline_outlined
                     : Icons.error_outline_outlined,
             size: 28.0,
-            color: status == 1 ? Colors.green : null,
+            color: status == 1
+                ? Colors.green
+                : status == 2
+                    ? Colors.red
+                    : null,
           ),
           const SizedBox(
             width: 8.0,
@@ -333,7 +374,10 @@ class StatusOrder extends StatelessWidget {
                     ? "Pesanan Disetujui"
                     : 'Pesanan Ditolak',
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+            ),
           )
         ],
       ),

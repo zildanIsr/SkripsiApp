@@ -6,6 +6,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../Controllers/edit_form.dart';
 import '../Controllers/user_controller.dart';
 import '../Models/user_model.dart';
+import '../widgets/bottom_navbar.dart';
 
 class EditProfile extends StatelessWidget {
   const EditProfile({super.key});
@@ -75,7 +76,7 @@ class EditForm extends GetView<EditFormController> {
             snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.red.shade300);
       } else if (responses == 200) {
-        Get.back();
+        Get.off(() => const BottomNavbar());
         return Get.snackbar("Success", "Berhasil mengubah data",
             messageText: const Text(
               "Berhasil mengubah data",

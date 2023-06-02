@@ -16,7 +16,7 @@ class ProductController extends GetxController {
   var listProduct = <Product>[].obs;
   var myProduct = <Product>[].obs;
 
-  final selectedCategory = 0.obs;
+  final selectedCategory = 1.obs;
   final selprice = 0.obs;
 
   @override
@@ -47,6 +47,12 @@ class ProductController extends GetxController {
         },
       );
       final resListFormat = json.decode(response.body)['data'];
+
+      if (resListFormat == null) {
+        //print('tidak ada data');
+        isLoading(false);
+        isError(true);
+      }
       //print(resListFormat);
       final List data = resListFormat;
 
@@ -149,10 +155,12 @@ class ProductController extends GetxController {
           Get.snackbar(
             'Error',
             '',
+            colorText: Colors.white,
             messageText: const Text(
-              'Gagal mendaftar sebagai perawat',
-              style: TextStyle(fontSize: 16.0),
+              'Gagal menambah layanan',
+              style: TextStyle(fontSize: 18.0, color: Colors.white),
             ),
+            backgroundColor: Colors.red.shade400,
             snackPosition: SnackPosition.TOP,
           );
           isLoading(false);
@@ -164,10 +172,12 @@ class ProductController extends GetxController {
           Get.snackbar(
             'Error',
             '',
+            colorText: Colors.white,
             messageText: const Text(
-              'Gagal mendaftar sebagai perawat',
-              style: TextStyle(fontSize: 16.0),
+              'Gagal kesalahan server',
+              style: TextStyle(fontSize: 18.0, color: Colors.white),
             ),
+            backgroundColor: Colors.red.shade400,
             snackPosition: SnackPosition.TOP,
           );
           isLoading(false);
@@ -182,18 +192,19 @@ class ProductController extends GetxController {
           getmyProducts();
 
           Get.snackbar(
-            "Success",
+            'Berhasil',
             '',
+            colorText: Colors.white,
             messageText: const Text(
-              'Berhasil mendaftar sebagai perawat',
-              style: TextStyle(fontSize: 16.0),
+              'Berhasil menambah layanan',
+              style: TextStyle(fontSize: 18.0, color: Colors.white),
             ),
+            backgroundColor: Colors.green.shade400,
             snackPosition: SnackPosition.TOP,
           );
           Future.delayed(const Duration(seconds: 2), () {
             isLoading(false);
             isError(false);
-            Get.back();
           });
         }
       } catch (e) {
@@ -211,6 +222,96 @@ class ProductController extends GetxController {
         ),
         snackPosition: SnackPosition.BOTTOM,
       );
+    }
+  }
+
+  deleteProduct(int id) async {
+    isLoading(true);
+    try {
+      int index = myProduct.indexWhere((p) => p.id == id);
+
+      if (index != -1) {
+        var token = await _storageService.readSecureData('token');
+
+        Uri url =
+            Uri.parse('http://192.168.100.4:3500/v1/api/product/$id/delete');
+
+        final response = await http.delete(url, headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        });
+
+        if (response.statusCode >= 400 && response.statusCode < 500) {
+          Get.snackbar(
+            'Error',
+            '',
+            colorText: Colors.white,
+            messageText: const Text(
+              'Gagal menghapus layanan',
+              style: TextStyle(fontSize: 18.0, color: Colors.white),
+            ),
+            backgroundColor: Colors.red.shade400,
+            snackPosition: SnackPosition.TOP,
+          );
+          isLoading(false);
+          isError(true);
+          return;
+        }
+
+        if (response.statusCode >= 500) {
+          Get.snackbar(
+            'Error',
+            '',
+            colorText: Colors.white,
+            messageText: const Text(
+              'Kesalahan server',
+              style: TextStyle(fontSize: 18.0, color: Colors.white),
+            ),
+            backgroundColor: Colors.red.shade400,
+            snackPosition: SnackPosition.TOP,
+          );
+          isLoading(false);
+          isError(true);
+          return;
+        }
+
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+          myProduct.removeAt(index);
+
+          Get.snackbar(
+            'Berhasil',
+            '',
+            colorText: Colors.white,
+            messageText: const Text(
+              'Berhasil menghapus layanan',
+              style: TextStyle(fontSize: 18.0, color: Colors.white),
+            ),
+            backgroundColor: Colors.green.shade400,
+            snackPosition: SnackPosition.TOP,
+          );
+
+          await Future.delayed(const Duration(seconds: 2));
+          isLoading(false);
+          isError(false);
+        }
+      } else {
+        Get.snackbar(
+          'Error',
+          '',
+          messageText: const Text(
+            'Layanan tidak ditemukan',
+            style: TextStyle(fontSize: 16.0),
+          ),
+          snackPosition: SnackPosition.TOP,
+        );
+        isLoading(false);
+        isError(true);
+      }
+    } catch (e) {
+      isLoading(false);
+      isError(true);
+      errmsg(e.toString());
     }
   }
 

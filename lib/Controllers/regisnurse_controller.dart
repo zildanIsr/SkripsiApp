@@ -5,7 +5,7 @@ import 'package:flutter_application_1/Models/perawat_model.dart';
 import 'package:get/get.dart';
 
 import 'package:http/http.dart' as http;
-import '../services/secure_storage.dart';
+//import '../services/secure_storage.dart';
 import '../services/simple_storage.dart';
 import 'auth.dart';
 
@@ -29,7 +29,7 @@ class RegisNurseController extends GetxController {
   Rx<TimeOfDay> close = TimeOfDay.now().obs;
 
   RxString errorText = 'Error'.obs;
-  final StorageService _storageService = StorageService();
+  //final StorageService _storageService = StorageService();
   final SharedStorage sharedService = SharedStorage();
   AuthController ac = Get.put(AuthController());
 
@@ -55,7 +55,7 @@ class RegisNurseController extends GetxController {
 
   addDayOpen(String val) {
     dayOpen.add(val);
-    print(dayOpen);
+    //print(dayOpen);
   }
 
   removeDayOpen(String val) {
@@ -135,12 +135,21 @@ class RegisNurseController extends GetxController {
       isLoading(true);
       try {
         if (education.length < 3) {
-          education.addAll([
+          education.add(
             feductionField.text,
-            seducationField.text,
-            teducationField.text
-          ]);
+          );
+          if (seducationField.text != '') {
+            education.add(
+              seducationField.text,
+            );
+          }
+          if (teducationField.text != '') {
+            education.add(
+              teducationField.text,
+            );
+          }
         }
+
         if (timeRange.length < 2) {
           timeRange.addAll([openTimeField.text, closeTimeField.text]);
         }
@@ -152,7 +161,7 @@ class RegisNurseController extends GetxController {
 
         Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/nurse/create');
 
-        var token = await _storageService.readSecureData('token');
+        //var token = await _storageService.readSecureData('token');
 
         Nurse data = Nurse(
           workPlace: clinicField.text,
@@ -169,51 +178,48 @@ class RegisNurseController extends GetxController {
             headers: {
               "Accept": "application/json",
               "Content-Type": "application/json",
-              "Authorization": "Bearer $token",
+              //"Authorization": "Bearer $token",
             },
             body: json.encode(data));
 
         if (response.statusCode >= 400 && response.statusCode < 500) {
-          Get.snackbar(
-            'Error',
-            errorText.value,
-            messageText: const Text(
-              'Gagal mendaftar sebagai perawat',
-              style: TextStyle(fontSize: 16.0),
-            ),
-            snackPosition: SnackPosition.TOP,
-          );
+          Get.snackbar("Error", "Server Error",
+              messageText: const Text(
+                "Gagal mendaftarkan",
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
+              colorText: Colors.white,
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.red.shade300);
           isLoading(false);
           isError(true);
           return;
         }
 
         if (response.statusCode >= 500) {
-          Get.snackbar(
-            'Error',
-            errorText.value,
-            messageText: const Text(
-              'Gagal mendaftar sebagai perawat',
-              style: TextStyle(fontSize: 16.0),
-            ),
-            snackPosition: SnackPosition.TOP,
-          );
+          Get.snackbar("Error", "Server Error",
+              messageText: const Text(
+                "Gagal mendaftar",
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
+              colorText: Colors.white,
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.red.shade300);
           isLoading(false);
           isError(true);
           return;
         }
 
         if (response.statusCode >= 200 && response.statusCode < 300) {
-          Get.snackbar(
-            "Success",
-            errorText.value,
-            messageText: const Text(
-              'Berhasil mendaftar sebagai perawat',
-              style: TextStyle(fontSize: 16.0),
-            ),
-            snackPosition: SnackPosition.TOP,
-          );
-          Future.delayed(const Duration(seconds: 5), () {
+          Get.snackbar("Success", "",
+              messageText: const Text(
+                "Berhasil mendaftar perawat",
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
+              colorText: Colors.white,
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.red.shade300);
+          Future.delayed(const Duration(seconds: 3), () {
             isLoading(false);
             isError(false);
             Get.back();
