@@ -19,6 +19,13 @@ class MapController extends GetxController {
   var position = <MapModel>[].obs;
   var productPoint = <Product>[].obs;
 
+  @override
+  void dispose() {
+    position.close();
+    productPoint.close();
+    super.dispose();
+  }
+
   Future<List<MapModel>> getAllNurseAddress() async {
     isLoading(true);
     try {

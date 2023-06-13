@@ -14,7 +14,7 @@ class OrderConfirm extends GetxController {
 
   @override
   void onInit() {
-    Future.delayed(const Duration(seconds: 4), () {
+    Future.delayed(const Duration(seconds: 3), () {
       isLoading(false);
     });
     super.onInit();

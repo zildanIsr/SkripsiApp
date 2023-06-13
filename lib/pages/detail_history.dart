@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/Controllers/auth.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
@@ -8,6 +9,8 @@ import 'package:intl/date_symbol_data_local.dart';
 
 import '../Controllers/category_controller.dart';
 import '../Controllers/detailhistory_controller.dart';
+import '../Controllers/history_controller.dart';
+import '../Controllers/report_controller.dart';
 import '../Models/kategori_model.dart';
 import '../widgets/user_information.dart';
 
@@ -62,6 +65,9 @@ class DetailDataOrder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     HistoryDetailController hc = Get.find();
+    HistoryContoller hcn = Get.find();
+    AuthController ac = Get.find();
+    ReportController rc = Get.put(ReportController());
 
     void popRate() {
       Get.bottomSheet(Container(
@@ -104,15 +110,16 @@ class DetailDataOrder extends StatelessWidget {
                 color: Colors.amber,
               ),
               onRatingUpdate: (rating) {
-                print(rating);
+                hcn.rate.value = rating;
               },
             ),
             const SizedBox(
               height: 16.0,
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: TextField(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: TextFormField(
+                controller: hcn.descText,
                 maxLines: 1,
               ),
             ),
@@ -124,7 +131,13 @@ class DetailDataOrder extends StatelessWidget {
                 height: 40,
                 padding: const EdgeInsets.symmetric(horizontal: 32.0),
                 child: ElevatedButton(
-                    onPressed: () {}, child: const Text('Kirim')))
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      hcn.sendRating(
+                          hc.detailhistory.perawatId, hc.detailhistory.id);
+                      hc.getDetailHistory(hc.detailhistory.id);
+                    },
+                    child: const Text('Kirim')))
           ],
         ),
       ));
@@ -162,7 +175,9 @@ class DetailDataOrder extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: TextFormField(
-                maxLines: 2,
+                controller: rc.descText,
+                maxLines: 1,
+                keyboardType: TextInputType.text,
               ),
             ),
             const SizedBox(
@@ -173,7 +188,12 @@ class DetailDataOrder extends StatelessWidget {
                 height: 40,
                 padding: const EdgeInsets.symmetric(horizontal: 32.0),
                 child: ElevatedButton(
-                    onPressed: () {}, child: const Text('Kirim')))
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      rc.sendReport(
+                          hc.detailhistory.perawatId, hc.detailhistory.id);
+                    },
+                    child: const Text('Kirim')))
           ],
         ),
       ));
@@ -211,6 +231,8 @@ class DetailDataOrder extends StatelessWidget {
           bodyHeight: bodyHeight,
           str: hc.detailhistory.perawat.strNumber,
           nurse: true,
+          direct: true,
+          image: hc.detailhistory.perawat.user.image,
         ),
         const Divider(
           height: 8,
@@ -218,69 +240,80 @@ class DetailDataOrder extends StatelessWidget {
         ),
         //Pasien
         UserInformation(
-          title1: 'Telepon',
-          title2: '',
+          title1: '',
+          title2: 'Telepon',
           userName: hc.detailhistory.user.name,
-          desc_1: hc.detailhistory.user.phoneNumber,
-          desc_2: '',
+          desc_1: '',
+          desc_2: hc.detailhistory.user.phoneNumber,
           bodyHeight: bodyHeight,
           id: hc.detailhistory.userId,
           nurse: false,
           getAddress:
               "${hc.detailhistory.address.street}, ${hc.detailhistory.address.sublocality}, ${hc.detailhistory.address.locality}, ${hc.detailhistory.address.subadminisArea}, ${hc.detailhistory.address.adminisArea} ${hc.detailhistory.address.postalCode}",
+          direct: true,
+          image: hc.detailhistory.user.image,
         ),
         const Divider(
           height: 4,
           thickness: 4,
         ),
-        hc.detailhistory.isFinished
-            ? Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        popReport();
-                      },
-                      child: const Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 10.0, vertical: 8.0),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.warning,
-                                size: 14,
+        Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                hc.detailhistory.userId == ac.user.id
+                    ? hc.detailhistory.isFinished
+                        ? ElevatedButton(
+                            onPressed: () {
+                              popReport();
+                            },
+                            child: const Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10.0, vertical: 8.0),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.warning,
+                                      size: 14,
+                                    ),
+                                    SizedBox(
+                                      width: 6,
+                                    ),
+                                    Text(
+                                      "Laporkan",
+                                    ),
+                                  ],
+                                )),
+                          )
+                        : Container()
+                    : Container(),
+                const SizedBox(
+                  width: 12.0,
+                ),
+                //hc.detailhistory.isFinished && !hc.detailhistory.isRated
+                hc.detailhistory.userId == ac.user.id
+                    ? hc.detailhistory.isFinished &&
+                            hc.detailhistory.status == 1 &&
+                            !hc.detailhistory.isRated
+                        ? ElevatedButton(
+                            onPressed: () {
+                              popRate();
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 8.0),
+                              child: Text(
+                                "Berikan Ulasan",
                               ),
-                              SizedBox(
-                                width: 6,
-                              ),
-                              Text(
-                                "Laporkan",
-                              ),
-                            ],
-                          )),
-                    ),
-                    const SizedBox(
-                      width: 12.0,
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        popRate();
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 10.0, vertical: 8.0),
-                        child: Text(
-                          "Berikan Ulasan",
-                        ),
-                      ),
-                    ),
-                  ],
-                ))
-            : Container()
+                            ),
+                          )
+                        : Container()
+                    : Container(),
+              ],
+            ))
       ],
     );
   }
@@ -527,9 +560,8 @@ class OrderInformation extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Text(
                     NumberFormat.currency(
-                      locale: "id-ID",
-                      decimalDigits: 0,
-                    ).format(harga),
+                            locale: "id-ID", decimalDigits: 0, name: "Rp. ")
+                        .format(harga),
                     maxLines: 1,
                     style: const TextStyle(fontSize: 16.0),
                   ),

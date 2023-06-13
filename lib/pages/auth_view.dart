@@ -20,7 +20,7 @@ class AuthView extends StatelessWidget {
     //debugPrint('Name: ${data.name}, Password: ${data.password}');
     return Future.delayed(loginTime).then((_) async {
       var responses = await authController.signInAuth(
-          data.name.toLowerCase(), data.password.toLowerCase());
+          data.name.toLowerCase(), data.password);
       if (responses >= 400 && responses < 500) {
         return 'Email atau password salah';
       } else if (responses >= 500) {
@@ -49,12 +49,15 @@ class AuthView extends StatelessWidget {
     });
   }
 
-  Future<String?> _recoverPassword(String name) {
-    debugPrint('Name: $name');
-    var nama = 'zildan@gmail.com';
-    return Future.delayed(loginTime).then((_) {
-      if (nama != name) {
-        return 'Pengguna tidak ditemukan';
+  Future<String?> _recoverPassword(String email) {
+    return Future.delayed(loginTime).then((_) async {
+      var responses = await authController.forgetPassword(email.toLowerCase());
+      if (responses >= 400 && responses < 500) {
+        return 'Email tidak ditemukan';
+      } else if (responses >= 500) {
+        return 'Gagal mengirim email';
+      } else if (responses >= 200 && responses < 300) {
+        authController.isLogin.value = true;
       }
       return null;
     });

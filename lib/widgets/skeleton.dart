@@ -3,60 +3,56 @@ import 'package:flutter/material.dart';
 import 'package:skeletons/skeletons.dart';
 
 class CardSkeleton extends StatelessWidget {
-  const CardSkeleton({super.key});
+  const CardSkeleton({super.key, required this.count});
+
+  final int count;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        width: double.infinity,
-        height: double.infinity,
-        //color: Colors.blue,
-        child: ListView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: 4,
-          itemBuilder: (context, index) => Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(15)),
-              child: SkeletonItem(
-                  child: Column(
+    return ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: count,
+      shrinkWrap: true,
+      itemBuilder: (context, index) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
+        child: Container(
+          padding: const EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(15)),
+          child: SkeletonItem(
+              child: Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SkeletonAvatar(
-                        style: SkeletonAvatarStyle(
-                            shape: BoxShape.rectangle,
-                            width: 130,
-                            height: 130,
-                            borderRadius: BorderRadius.all(Radius.circular(8))),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: SkeletonParagraph(
-                          style: SkeletonParagraphStyle(
-                              lines: 5,
-                              lineStyle: SkeletonLineStyle(
-                                randomLength: true,
-                                height: 14,
-                                borderRadius: BorderRadius.circular(8),
-                                minLength:
-                                    MediaQuery.of(context).size.width / 6,
-                                maxLength:
-                                    MediaQuery.of(context).size.width / 2,
-                              )),
-                        ),
-                      )
-                    ],
+                  const SkeletonAvatar(
+                    style: SkeletonAvatarStyle(
+                        shape: BoxShape.rectangle,
+                        width: 130,
+                        height: 130,
+                        borderRadius: BorderRadius.all(Radius.circular(8))),
                   ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: SkeletonParagraph(
+                      style: SkeletonParagraphStyle(
+                          lines: 5,
+                          lineStyle: SkeletonLineStyle(
+                            randomLength: true,
+                            height: 14,
+                            borderRadius: BorderRadius.circular(8),
+                            minLength: MediaQuery.of(context).size.width / 6,
+                            maxLength: MediaQuery.of(context).size.width / 2,
+                          )),
+                    ),
+                  )
                 ],
-              )),
-            ),
-          ),
-        ));
+              ),
+            ],
+          )),
+        ),
+      ),
+    );
   }
 }
 

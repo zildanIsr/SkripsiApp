@@ -74,6 +74,7 @@ class DetailPerawat extends StatelessWidget {
                       amountOrder: nc.singleNurse.orders!.length.toString(),
                       nurseId: nc.singleNurse.id!,
                       rate: nc.rating.value,
+                      image: nc.singleNurse.user!.image,
                     ),
         ));
   }
@@ -93,13 +94,15 @@ class ProfileDetail extends StatelessWidget {
       required this.amountProduct,
       required this.amountOrder,
       required this.nurseId,
-      required this.rate});
+      required this.rate,
+      this.image});
 
   final double bodyHeight;
   final double mediaQueryWidht;
   final String name;
   final String clinic;
   final String strNumber;
+  final String? image;
   final List dayOp;
   final List timeOp;
   final List education;
@@ -136,15 +139,17 @@ class ProfileDetail extends StatelessWidget {
                   top: 80,
                   child: Column(
                     children: [
-                      const CircleAvatar(
-                        backgroundColor: Colors.greenAccent,
-                        radius: 70,
+                      CircleAvatar(
+                        backgroundColor: Colors.white,
+                        radius: 75,
                         child: CircleAvatar(
                           backgroundColor: Colors.transparent,
-                          backgroundImage: AssetImage(
-                            'assets/doctor.png',
-                          ),
-                          radius: 60,
+                          backgroundImage: image != null
+                              ? NetworkImage(image!)
+                              : const AssetImage(
+                                  'assets/doctor.png',
+                                ) as ImageProvider,
+                          radius: 70,
                         ),
                       ),
                       const SizedBox(
@@ -210,26 +215,11 @@ class ProfileDetail extends StatelessWidget {
                                   ],
                                 ),
                               ),
-                              // const VerticalDivider(
-                              //   width: 1,
-                              //   thickness: 1,
-                              //   indent: 8,
-                              //   endIndent: 8,
-                              //   color: Colors.black26,
-                              // ),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    // Text(
-                                    //   'Rating',
-                                    //   textAlign: TextAlign.center,
-                                    //   style: TextStyle(
-                                    //       fontSize: 16.0,
-                                    //       color: Colors.black38,
-                                    //       fontWeight: FontWeight.w500),
-                                    // ),
                                     RatingNurse(
                                         sizeIcon: 22,
                                         alignSelected: MainAxisAlignment.center,
@@ -245,23 +235,9 @@ class ProfileDetail extends StatelessWidget {
                                           color: Colors.black38,
                                           fontWeight: FontWeight.w400),
                                     ),
-                                    // Text(
-                                    //   'Lihat Ulasan',
-                                    //   textAlign: TextAlign.center,
-                                    //   style: TextStyle(
-                                    //       color: Colors.pink,
-                                    //       fontWeight: FontWeight.w500),
-                                    // )
                                   ],
                                 ),
                               ),
-                              // const VerticalDivider(
-                              //   width: 1,
-                              //   thickness: 1,
-                              //   indent: 8,
-                              //   endIndent: 8,
-                              //   color: Colors.black26,
-                              // ),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,

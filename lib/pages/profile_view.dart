@@ -82,14 +82,14 @@ class _ImageCircleState extends State<ImageCircle> {
   final ImagePicker _imagePicker = ImagePicker();
   XFile? _pickedImage;
 
-  UserController uc = Get.put(UserController());
+  AuthController ac = Get.find();
 
   Future<void> _pickImage() async {
     final XFile? pickedImage =
         await _imagePicker.pickImage(source: ImageSource.gallery);
 
     if (pickedImage != null) {
-      uc.uploadImage(File(pickedImage.path));
+      ac.uploadImage(File(pickedImage.path));
     }
 
     setState(() {
@@ -111,11 +111,13 @@ class _ImageCircleState extends State<ImageCircle> {
               backgroundColor: Colors.white,
               radius: 75,
               child: CircleAvatar(
-                backgroundColor: Colors.greenAccent,
-                backgroundImage: _pickedImage != null
-                    ? FileImage(File(_pickedImage!.path))
-                    : const AssetImage('assets/doctor.png')
-                        as ImageProvider<Object>?,
+                backgroundColor: Colors.transparent,
+                backgroundImage: ac.user.image == null
+                    ? _pickedImage != null
+                        ? FileImage(File(_pickedImage!.path))
+                        : const AssetImage('assets/doctor.png')
+                            as ImageProvider<Object>?
+                    : NetworkImage(ac.user.image),
                 radius: 70,
               ),
             ),
@@ -439,7 +441,7 @@ class ButtonList extends StatelessWidget {
                   onPressed: () {
                     ac.logout();
                     Get.deleteAll();
-                    Get.offAll(() => AuthView());
+                    Get.offAll(() => AuthView(), transition: Transition.fade);
                   },
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,

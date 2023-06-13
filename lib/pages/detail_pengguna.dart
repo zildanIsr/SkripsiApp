@@ -45,8 +45,6 @@ class DetailPengguna extends StatelessWidget {
 
     uc.getDataUserbyId(id!);
 
-    //uc.getDataUser(id);
-
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: myAppBar,
@@ -100,15 +98,17 @@ class ProfileDetail extends StatelessWidget {
                   top: 80,
                   child: Column(
                     children: [
-                      const CircleAvatar(
-                        backgroundColor: Colors.pinkAccent,
-                        radius: 70,
+                      CircleAvatar(
+                        backgroundColor: Colors.white,
+                        radius: 75,
                         child: CircleAvatar(
                           backgroundColor: Colors.transparent,
-                          backgroundImage: AssetImage(
-                            'assets/doctor.png',
-                          ),
-                          radius: 60,
+                          backgroundImage: uc.userbyid.image != null
+                              ? NetworkImage(uc.userbyid.image!)
+                              : const AssetImage(
+                                  'assets/doctor',
+                                ) as ImageProvider<Object>?,
+                          radius: 70,
                         ),
                       ),
                       const SizedBox(
@@ -129,13 +129,12 @@ class ProfileDetail extends StatelessWidget {
                 ),
                 Positioned(
                     bottom: -50,
-                    left: 110,
-                    right: 110,
+                    left: 100,
+                    right: 100,
                     child: Card(
                       elevation: 4.0,
                       child: Container(
-                        //width: mediaQueryWidht * 0.3,
-                        height: 90,
+                        height: 80,
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,

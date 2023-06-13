@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -100,6 +101,56 @@ class AuthController extends GetxController {
       return response.statusCode;
     } catch (e) {
       rethrow;
+    }
+  }
+
+  forgetPassword(String email) async {
+    try {
+      Uri url =
+          Uri.parse('http://192.168.100.4:3500/v1/api/auth/$email/sendemail');
+
+      final response = await http.get(url, headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      });
+
+      return response.statusCode;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  uploadImage(File file) async {
+    try {
+      Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/auth/upload');
+
+      var token = await _storageService.readSecureData('token');
+
+      Map<String, String> headers = <String, String>{
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      };
+
+      var request = http.MultipartRequest('POST', url);
+
+      request.headers.addAll(headers);
+      request.files.add(await http.MultipartFile.fromPath('image', file.path));
+
+      var response = await request.send();
+
+      if (response.statusCode >= 400) {
+        return response.statusCode;
+      }
+
+      // var resbody = json.decode(response.body)['data'];
+
+      // ac.user = User.fromJson(resbody);
+      // sharedService.addStringToSF(StorageItem('user', json.encode(resbody)));
+
+      return response.statusCode;
+    } catch (error) {
+      throw Exception(error);
     }
   }
 

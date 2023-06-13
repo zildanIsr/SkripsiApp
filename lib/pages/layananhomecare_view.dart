@@ -11,7 +11,7 @@ class LayananHomecareView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pc = Get.put(ProductController());
+    final pc = Get.find<ProductController>();
 
     final myAppbar = AppBar(
       title: const Text('Layanan Homecare'),
@@ -145,7 +145,9 @@ class LayananHomecareView extends StatelessWidget {
     return Scaffold(
       appBar: myAppbar,
       body: Obx(() => pc.isLoading.value
-          ? const CardSkeleton()
+          ? const CardSkeleton(
+              count: 3,
+            )
           : pc.myProduct.isEmpty
               ? const Center(
                   child: Text(

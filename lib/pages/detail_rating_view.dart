@@ -27,6 +27,12 @@ class _DetailRatingState extends State<DetailRating>
   }
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final myAppbar = AppBar(
       title: const Text('Ulasan Pasien'),

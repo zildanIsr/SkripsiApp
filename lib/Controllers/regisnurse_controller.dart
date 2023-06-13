@@ -2,11 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Models/perawat_model.dart';
+import '../Models/user_model.dart' as usermodel;
 import 'package:get/get.dart';
 
 import 'package:http/http.dart' as http;
-//import '../services/secure_storage.dart';
+import '../Models/storage_item.dart';
+import '../services/secure_storage.dart';
 import '../services/simple_storage.dart';
+import '../widgets/bottom_navbar.dart';
 import 'auth.dart';
 
 class RegisNurseController extends GetxController {
@@ -29,7 +32,7 @@ class RegisNurseController extends GetxController {
   Rx<TimeOfDay> close = TimeOfDay.now().obs;
 
   RxString errorText = 'Error'.obs;
-  //final StorageService _storageService = StorageService();
+  final StorageService _storageService = StorageService();
   final SharedStorage sharedService = SharedStorage();
   AuthController ac = Get.put(AuthController());
 
@@ -68,34 +71,6 @@ class RegisNurseController extends GetxController {
 
   void timeCloseChanged(TimeOfDay val) {
     close.value = val;
-  }
-
-  String? geterrorText() {
-    final clinic = clinicField.value.text;
-    final opentime = openTimeField.value.text;
-    final closetime = closeTimeField.value.text;
-    final str = strNumber.value.text;
-    final firstEdu = feductionField.value.text;
-
-    if (opentime.isEmpty) {
-      return 'Jam Buka Tidak Boleh Kosong';
-    }
-    if (closetime.isEmpty) {
-      return 'Jam Tutup Tidak Boleh Kosong';
-    }
-    if (clinic.isEmpty) {
-      return 'Tempat Praktik Tidak Boleh Kosong';
-    }
-    if (str.isEmpty) {
-      return 'Nomor STR Tidak Boleh Kosong';
-    }
-    if (firstEdu.isEmpty) {
-      return 'Pendidikan Pertama Tidak Boleh Kosong';
-    }
-    if (dayOpen.isEmpty) {
-      return 'Jadwal Tidak Boleh Kosong';
-    }
-    return null;
   }
 
   bool validation() {
@@ -161,7 +136,7 @@ class RegisNurseController extends GetxController {
 
         Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/nurse/create');
 
-        //var token = await _storageService.readSecureData('token');
+        var token = await _storageService.readSecureData('token');
 
         Nurse data = Nurse(
           workPlace: clinicField.text,
@@ -178,7 +153,7 @@ class RegisNurseController extends GetxController {
             headers: {
               "Accept": "application/json",
               "Content-Type": "application/json",
-              //"Authorization": "Bearer $token",
+              "Authorization": "Bearer $token",
             },
             body: json.encode(data));
 
@@ -211,19 +186,33 @@ class RegisNurseController extends GetxController {
         }
 
         if (response.statusCode >= 200 && response.statusCode < 300) {
-          Get.snackbar("Success", "",
+          var resbody = json.decode(response.body)['data'];
+          var nurse = json.decode(response.body)['nurse'];
+          sharedService
+              .addStringToSF(StorageItem('user', json.encode(resbody)));
+
+          ac.user = usermodel.User.fromJson(resbody);
+          //print('str:  ${nurse['strNumber']}');
+          if (nurse != null) {
+            ac.strNumber.value = nurse['strNumber'] ?? '';
+            sharedService
+                .addStringToSF(StorageItem('strNumber', ac.strNumber.value));
+          }
+
+          Future.delayed(const Duration(seconds: 3), () {
+            isLoading(false);
+            isError(false);
+            Get.off(() => const BottomNavbar());
+          });
+
+          return Get.snackbar("Success", "",
               messageText: const Text(
                 "Berhasil mendaftar perawat",
                 style: TextStyle(fontSize: 16, color: Colors.white),
               ),
               colorText: Colors.white,
               snackPosition: SnackPosition.TOP,
-              backgroundColor: Colors.red.shade300);
-          Future.delayed(const Duration(seconds: 3), () {
-            isLoading(false);
-            isError(false);
-            Get.back();
-          });
+              backgroundColor: Colors.green.shade300);
         }
       } catch (e) {
         e.printError();

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:get/get.dart';
 import '../Models/storage_item.dart';
@@ -24,13 +23,6 @@ class UserController extends GetxController {
 
   late User userdata;
   late UserDetail userbyid;
-
-  @override
-  void onInit() {
-    //getDataUser();
-    //getRole();
-    super.onInit();
-  }
 
   getRole() async {
     var getuserRole = await sharedService.getIntValuesSF('role');
@@ -145,47 +137,6 @@ class UserController extends GetxController {
 
       Future.delayed(
           const Duration(seconds: 5), () => {isLoading(false), isError(false)});
-
-      return response.statusCode;
-    } catch (error) {
-      isLoading(false);
-      isError(true);
-      errmsg(error.toString());
-      throw Exception(error);
-    }
-  }
-
-  uploadImage(File file) async {
-    isLoading(true);
-    try {
-      Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/auth/upload');
-
-      var token = await _storageService.readSecureData('token');
-
-      Map<String, String> headers = <String, String>{
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      };
-
-      var request = http.MultipartRequest('POST', url);
-
-      request.headers.addAll(headers);
-      request.files.add(await http.MultipartFile.fromPath('image', file.path));
-
-      var response = await request.send();
-
-      if (response.statusCode >= 400) {
-        return response.statusCode;
-      }
-
-      // var resbody = json.decode(response.body)['data'];
-
-      // ac.user = User.fromJson(resbody);
-      // sharedService.addStringToSF(StorageItem('user', json.encode(resbody)));
-
-      Future.delayed(
-          const Duration(seconds: 2), () => {isLoading(false), isError(false)});
 
       return response.statusCode;
     } catch (error) {

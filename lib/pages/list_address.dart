@@ -17,7 +17,9 @@ class ListAddress extends StatelessWidget {
         ),
         body: Obx(
           () => ac.isLoading.value
-              ? const CardSkeleton()
+              ? const CardSkeleton(
+                  count: 3,
+                )
               : ac.addressbyUser.isEmpty
                   ? const Center(
                       child: Text(

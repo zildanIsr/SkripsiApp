@@ -21,7 +21,7 @@ class _ArticleDescription extends StatelessWidget {
   final String name;
   final String category;
   final int categoryId;
-  final String rating;
+  final double rating;
   final int price;
   final int productId;
   final String strNumber;
@@ -64,7 +64,7 @@ class _ArticleDescription extends StatelessWidget {
                 child: RatingNurse(
                   alignSelected: MainAxisAlignment.start,
                   sizeIcon: 22.0,
-                  rate: rating,
+                  rate: (rating).toStringAsFixed(1),
                 ))),
         SizedBox(
           width: double.infinity,
@@ -74,9 +74,8 @@ class _ArticleDescription extends StatelessWidget {
             children: <Widget>[
               Text(
                 NumberFormat.currency(
-                  locale: "id-ID",
-                  decimalDigits: 0,
-                ).format(price),
+                        locale: "id-ID", decimalDigits: 0, name: 'Rp ')
+                    .format(price),
                 style: const TextStyle(
                     fontSize: 20.0, fontWeight: FontWeight.w500),
               ),
@@ -334,7 +333,7 @@ class PerawatListItem extends StatelessWidget {
   final Widget thumbnail;
   final String name;
   final String category;
-  final String rating;
+  final double rating;
   final int price;
   final int categoryId;
   final String strNumber;
@@ -385,39 +384,6 @@ class PerawatListItem extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class PerawatCard extends StatelessWidget {
-  const PerawatCard({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: EdgeInsets.zero,
-      children: const <Widget>[
-        PerawatListItem(
-          thumbnail: Image(image: AssetImage('assets/nurse-boy-128.png')),
-          name: 'Zildan Isrezkinurahman',
-          category: 'Sp Sakit Jiwa.',
-          price: 20000,
-          rating: '4.8',
-          strNumber: "1",
-          categoryId: 1,
-          productId: 1,
-        ),
-        PerawatListItem(
-          thumbnail: Image(image: AssetImage('assets/nurse-boy-128.png')),
-          name: 'Zildan Isrezkinurahman',
-          category: 'Sp Sakit Jiwa.',
-          price: 20000,
-          rating: '5',
-          strNumber: '123',
-          categoryId: 2,
-          productId: 1,
-        ),
-      ],
     );
   }
 }

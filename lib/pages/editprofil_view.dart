@@ -25,7 +25,10 @@ class EditProfile extends StatelessWidget {
                 OutlinedButton(
                   style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: Colors.pink)),
-                  onPressed: () => Navigator.of(context).pop(true),
+                  onPressed: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    Navigator.of(context).pop(true);
+                  },
                   child: const Text('Iya'),
                 ),
                 ElevatedButton(
@@ -35,7 +38,7 @@ class EditProfile extends StatelessWidget {
               ],
             ),
           ) ??
-          false; //if showDialouge had returned null, then return false
+          false;
     }
 
     return Scaffold(
@@ -350,6 +353,7 @@ class EditForm extends GetView<EditFormController> {
                             style: ElevatedButton.styleFrom(
                                 minimumSize: const Size(double.infinity, 50)),
                             onPressed: () {
+                              FocusManager.instance.primaryFocus?.unfocus();
                               if (controller.editFormKey.currentState!
                                   .validate()) {
                                 onUpdate(User(

@@ -35,7 +35,7 @@ class ItemHistoryPasien extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     HistoryContoller hc = Get.find();
-    AuthController ac = Get.put(AuthController());
+    AuthController ac = Get.find();
 
     void popRate() {
       Get.bottomSheet(Container(
@@ -234,16 +234,17 @@ class ItemHistoryPasien extends StatelessWidget {
                         ),
                         Text(
                           NumberFormat.currency(
-                            locale: "id-ID",
-                            decimalDigits: 0,
-                          ).format(amountPrice),
+                                  locale: "id-ID",
+                                  decimalDigits: 0,
+                                  name: 'Rp ')
+                              .format(amountPrice),
                           style: const TextStyle(
                               fontSize: 18.0, fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
                     userId == ac.user.id
-                        ? isFinished && !isRated
+                        ? isFinished && !isRated && statusOrder == 1
                             ? Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 mainAxisSize: MainAxisSize.max,
@@ -257,11 +258,13 @@ class ItemHistoryPasien extends StatelessWidget {
                               )
                             : isFinished && isRated
                                 ? Container()
-                                : ButtonOrder(
-                                    userId: userId,
-                                    status: statusOrder,
-                                    id: id,
-                                  )
+                                : isFinished && statusOrder != 1
+                                    ? Container()
+                                    : ButtonOrder(
+                                        userId: userId,
+                                        status: statusOrder,
+                                        id: id,
+                                      )
                         : ButtonOrder(
                             userId: userId,
                             status: statusOrder,

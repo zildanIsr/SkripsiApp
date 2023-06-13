@@ -17,7 +17,6 @@ class AddressController extends GetxController {
   var isError = false.obs;
   var errmsg = "".obs;
   var selectedAddress = 0.obs;
-  //var position = LatLng(-7.983908, 112.621391).obs;
 
   var addressbyUser = <AddressModel>[].obs;
 
@@ -31,6 +30,9 @@ class AddressController extends GetxController {
   @override
   void onClose() {
     addressbyUser.close();
+    errmsg.close();
+    isLoading.close();
+    isError.close();
     super.onClose();
   }
 

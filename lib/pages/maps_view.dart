@@ -8,24 +8,6 @@ import '../Controllers/map_contoller.dart';
 import '../widgets/perawat_card.dart';
 import '../widgets/skeleton.dart';
 
-List<Map<String, dynamic>> datas = [
-  {
-    'id': '1',
-    'position': const LatLng(-6.410674, 106.856738),
-    'assetPath': 'assets/doctor.png',
-  },
-  {
-    'id': '2',
-    'position': const LatLng(-6.411506, 106.863218),
-    'assetPath': 'assets/doctor.png',
-  },
-  {
-    'id': '3',
-    'position': const LatLng(-6.414406, 106.854013),
-    'assetPath': 'assets/doctor.png',
-  },
-];
-
 class MapsView extends StatefulWidget {
   const MapsView({Key? key}) : super(key: key);
 
@@ -42,7 +24,7 @@ class MapsViewState extends State<MapsView> {
   final Set<Marker> _markers = <Marker>{};
 
   static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(-6.200000, 106.816666),
+    target: LatLng(-7.983908, 112.621391),
     zoom: 14.4746,
   );
 
@@ -52,11 +34,13 @@ class MapsViewState extends State<MapsView> {
     _generateMarkers();
   }
 
+  @override
+  void dispose() {
+    _markers.clear();
+    super.dispose();
+  }
+
   _generateMarkers() async {
-    // BitmapDescriptor markerbitmap = await BitmapDescriptor.fromAssetImage(
-    //   const ImageConfiguration(),
-    //   "assets/nurse.png",
-    // )
     await mc.getAllNurseAddress();
     late BitmapDescriptor myIcon;
 
@@ -93,7 +77,9 @@ class MapsViewState extends State<MapsView> {
                         backgroundColor: Colors.white,
                       ),
                       body: Obx(() => mc.isLoading.value
-                          ? const CardSkeleton()
+                          ? const CardSkeleton(
+                              count: 3,
+                            )
                           : mc.productPoint.isEmpty
                               ? const Center(
                                   child: Column(
@@ -124,20 +110,27 @@ class MapsViewState extends State<MapsView> {
                                   itemBuilder: (context, index) {
                                     return PerawatListItem(
                                       key: ValueKey(mc.productPoint[index].id),
-                                      thumbnail: Card(
-                                        elevation: 2.0,
-                                        child: Image.asset(
-                                          'assets/nurse-boy-128.png',
-                                          fit: BoxFit.cover,
-                                        ),
+                                      thumbnail: ClipRRect(
+                                        borderRadius: BorderRadius.circular(15),
+                                        child:
+                                            mc.productPoint[index].user.image !=
+                                                    null
+                                                ? Image.network(
+                                                    mc.productPoint[index].user
+                                                        .image,
+                                                    fit: BoxFit.fill,
+                                                  )
+                                                : Image.asset(
+                                                    'assets/nurse-boy-128.png',
+                                                    fit: BoxFit.cover,
+                                                  ),
                                       ),
                                       name: mc.productPoint[index].user.name,
                                       category:
                                           mc.productPoint[index].category.name,
                                       price: mc.productPoint[index].price,
                                       rating: mc
-                                          .productPoint[index].perawat.rating
-                                          .toString(),
+                                          .productPoint[index].perawat.rating!,
                                       strNumber: mc.productPoint[index].perawat
                                           .strNumber,
                                       categoryId:

@@ -22,7 +22,7 @@ class RatingController extends GetxController {
   void onClose() {
     isLoading.close();
     isError.close();
-    listTestimoni.clear();
+    listTestimoni.close();
     errmsg.close();
     rating.close();
     totOrder.close();

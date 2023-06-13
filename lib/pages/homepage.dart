@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Controllers/auth.dart';
 import 'package:flutter_application_1/Controllers/product_controller.dart';
 import 'package:flutter_application_1/pages/listperawat_view.dart';
+import 'package:flutter_application_1/pages/search_view.dart';
 import 'package:flutter_application_1/widgets/perawat_card.dart';
 import '../Models/kategori_model.dart';
 
 import 'package:get/get.dart';
+
+import '../widgets/skeleton.dart';
 
 class Homepage extends StatelessWidget {
   const Homepage({super.key});
@@ -13,17 +16,18 @@ class Homepage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mediaQueryHeight = MediaQuery.of(context).size.height;
-    //final mediaQueryWidht = MediaQuery.of(context).size.width;
 
     final bodyHeight = mediaQueryHeight - MediaQuery.of(context).padding.top;
     AuthController ac = Get.find();
+    ProductController pc = Get.put(ProductController());
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Column(
         children: <Widget>[
           Container(
-            height: bodyHeight * 0.2,
-            //color: Colors.amber,
+            height: bodyHeight * 0.27,
+            //color: Colors.blue,
             alignment: Alignment.topLeft,
             padding: const EdgeInsets.fromLTRB(16, 50.0, 16.0, 8.0),
             child: Column(
@@ -52,50 +56,142 @@ class Homepage extends StatelessWidget {
                         fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                 ),
+                const SizedBox(
+                  height: 24.0,
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        transitionDuration: const Duration(seconds: 1),
+                        pageBuilder: (_, __, ___) => const SearchView(),
+                      ),
+                    );
+                  },
+                  child: Hero(
+                    tag: 'search-bar',
+                    child: Material(
+                      color: Colors.transparent,
+                      child: TextField(
+                        enabled: false,
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 6, horizontal: 12),
+                          hintText: 'cari nama perawat..',
+                          filled: true,
+                          fillColor: Colors.white,
+                          prefixIcon: const Icon(Icons.search_outlined),
+                          suffixIcon: Icon(
+                            Icons.arrow_circle_right_rounded,
+                            color: Colors.green.shade300,
+                            size: 32,
+                          ),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50),
+                              borderSide: const BorderSide(
+                                  color: Colors.black26, width: 0.5)),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
           SizedBox(
             //color: Colors.amber,
-            height: bodyHeight * 0.25,
+            height: bodyHeight * 0.23,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
                 children: [
-                  const Flexible(
-                      child: Padding(
+                  const Padding(
                     padding: EdgeInsets.only(bottom: 8.0),
                     child: Text(
                       'Sehat Dari Rumah',
                       style:
                           TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
-                  )),
-                  Flexible(
-                      flex: 2,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: CategoryList(),
-                      ))
+                  ),
+                  CategoryList()
                 ],
               ),
             ),
           ),
           Container(
-            height: bodyHeight * 0.5,
+            height: bodyHeight * 0.45,
+            //color: Colors.amberAccent,
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: const Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(bottom: 8.0),
-                  child: Text(
-                    'Layanan Terbaru',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
+                const Text(
+                  'Layanan Terbaru',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-                Flexible(child: PerawatCard())
+                Obx(() => pc.isLoading.value
+                    ? const CardSkeleton(
+                        count: 1,
+                      )
+                    : pc.populerProduct.isEmpty
+                        ? const Center(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.medical_services_outlined,
+                                  color: Colors.black12,
+                                  size: 100,
+                                ),
+                                SizedBox(
+                                  height: 8.0,
+                                ),
+                                Text(
+                                  "Belum ada layanan",
+                                  style: TextStyle(
+                                      fontSize: 20.0,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ],
+                            ),
+                          )
+                        : ListView.builder(
+                            padding: EdgeInsets.zero,
+                            itemCount: pc.populerProduct.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return PerawatListItem(
+                                key: ValueKey(pc.populerProduct[index].id),
+                                thumbnail: ClipRRect(
+                                  borderRadius: BorderRadius.circular(15),
+                                  child: pc.populerProduct[index].user.image !=
+                                          null
+                                      ? Image.network(
+                                          pc.populerProduct[index].user.image,
+                                          fit: BoxFit.fill,
+                                        )
+                                      : Image.asset(
+                                          'assets/nurse-boy-128.png',
+                                          fit: BoxFit.cover,
+                                        ),
+                                ),
+                                name: pc.populerProduct[index].user.name,
+                                category:
+                                    pc.populerProduct[index].category.name,
+                                price: pc.populerProduct[index].price,
+                                rating:
+                                    pc.populerProduct[index].perawat.rating!,
+                                strNumber:
+                                    pc.populerProduct[index].perawat.strNumber,
+                                categoryId: pc.populerProduct[index].categoryId,
+                                productId: pc.populerProduct[index].id,
+                              );
+                            }))
               ],
             ),
           )

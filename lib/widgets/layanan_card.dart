@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Controllers/product_controller.dart';
 import 'package:flutter_application_1/widgets/status_widget.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../Controllers/category_controller.dart';
 import '../Models/kategori_model.dart';
@@ -63,10 +64,10 @@ class ListLayananCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: ElevatedButton(
                 onPressed: () {
-                  //pc.addNewProduct();
+                  pc.editProduct(id);
                   Navigator.of(context).pop(true);
                 },
-                child: const Text('Tambah')),
+                child: const Text('Simpan')),
           ),
           cancel: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -220,13 +221,11 @@ class ListLayananCard extends StatelessWidget {
                     height: 6.0,
                   ),
                   Text(
-                    'Rp.${price.toString()}',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    NumberFormat.currency(
+                            locale: "id-ID", decimalDigits: 0, name: 'Rp ')
+                        .format(price),
                     style: const TextStyle(
-                      fontSize: 16.0,
-                      color: Colors.black87,
-                    ),
+                        fontSize: 16.0, fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(
                     height: 5.0,
@@ -246,7 +245,7 @@ class ListLayananCard extends StatelessWidget {
                           onPressed: () {
                             showExitPopup();
                           },
-                          child: const Text('Delete')),
+                          child: const Text('Hapus')),
                       const SizedBox(
                         width: 8.0,
                       ),

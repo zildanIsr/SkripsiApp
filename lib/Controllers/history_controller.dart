@@ -33,6 +33,7 @@ class HistoryContoller extends GetxController {
   void onClose() {
     listHistory.close();
     listFinished.close();
+    descText.dispose();
     super.onClose();
   }
 
@@ -325,7 +326,6 @@ class HistoryContoller extends GetxController {
         await Future.delayed(const Duration(seconds: 2));
         isLoading(false);
         isError(false);
-        Get.back();
       }
     } catch (e) {
       isLoading(false);

@@ -27,6 +27,12 @@ class _HistoryViewState extends State<HistoryView>
   }
 
   @override
+  void dispose() {
+    tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     HistoryContoller hc = Get.put(HistoryContoller());
 
@@ -76,7 +82,7 @@ class _HistoryViewState extends State<HistoryView>
                           )
                         : RefreshIndicator(
                             onRefresh: () async {
-                              hc.refreshData();
+                              await hc.refreshData();
                             },
                             child: ListView.builder(
                                 shrinkWrap: true,
@@ -106,7 +112,7 @@ class _HistoryViewState extends State<HistoryView>
                     : hc.listFinished.isEmpty
                         ? RefreshIndicator(
                             onRefresh: () async {
-                              hc.refreshData();
+                              await hc.refreshData();
                             },
                             child: const Center(
                                 child: Text('Belum ada history',
@@ -114,7 +120,7 @@ class _HistoryViewState extends State<HistoryView>
                           )
                         : RefreshIndicator(
                             onRefresh: () async {
-                              hc.refreshData();
+                              await hc.refreshData();
                             },
                             child: ListView.builder(
                                 shrinkWrap: true,

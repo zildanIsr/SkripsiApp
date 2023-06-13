@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Controllers/product_controller.dart';
-import 'package:flutter_application_1/widgets/perawat_card.dart';
-import 'package:flutter_application_1/widgets/skeleton.dart';
-
 import 'package:get/get.dart';
 
-class ListPerawatView extends StatelessWidget {
-  const ListPerawatView({super.key});
+import '../Controllers/product_controller.dart';
+import '../widgets/perawat_card.dart';
+import '../widgets/skeleton.dart';
+
+class SelectedNurseView extends StatelessWidget {
+  const SelectedNurseView({super.key, required this.id, required this.name});
+
+  final int id;
+  final String name;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +27,7 @@ class ListPerawatView extends StatelessWidget {
         elevation: 0.0,
         backgroundColor: Colors.transparent,
         title: Text(
-          Get.arguments['category-name'].toString(),
+          name,
           style: const TextStyle(
             color: Colors.black87,
           ),
@@ -62,15 +65,15 @@ class ListPerawatView extends StatelessWidget {
                 : ListView.builder(
                     padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 0),
                     shrinkWrap: true,
-                    itemCount: pc.listProduct.length,
+                    itemCount: pc.productNurse.length,
                     itemBuilder: (context, index) {
                       return PerawatListItem(
-                        key: ValueKey(pc.listProduct[index].id),
+                        key: ValueKey(pc.productNurse[index].id),
                         thumbnail: ClipRRect(
                           borderRadius: BorderRadius.circular(15),
-                          child: pc.listProduct[index].user.image != null
+                          child: pc.productNurse[index].user.image != null
                               ? Image.network(
-                                  pc.listProduct[index].user.image,
+                                  pc.productNurse[index].user.image,
                                   fit: BoxFit.fill,
                                 )
                               : Image.asset(
@@ -78,13 +81,13 @@ class ListPerawatView extends StatelessWidget {
                                   fit: BoxFit.cover,
                                 ),
                         ),
-                        name: pc.listProduct[index].user.name,
-                        category: pc.listProduct[index].category.name,
-                        price: pc.listProduct[index].price,
-                        rating: pc.listProduct[index].perawat.rating!,
-                        strNumber: pc.listProduct[index].perawat.strNumber,
-                        categoryId: pc.listProduct[index].categoryId,
-                        productId: pc.listProduct[index].id,
+                        name: pc.productNurse[index].user.name,
+                        category: pc.productNurse[index].category.name,
+                        price: pc.productNurse[index].price,
+                        rating: pc.productNurse[index].perawat.rating!,
+                        strNumber: pc.productNurse[index].perawat.strNumber,
+                        categoryId: pc.productNurse[index].categoryId,
+                        productId: pc.productNurse[index].id,
                       );
                     })));
   }

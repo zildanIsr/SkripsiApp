@@ -40,7 +40,6 @@ class _DropdownKategoriState extends State<DropdownKategori> {
           );
         }).toList(),
         onChanged: (value) {
-          print(value);
           setState(() {
             _selected = value as int;
             pc.onChangedSelectedCat(value);

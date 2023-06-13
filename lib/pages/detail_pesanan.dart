@@ -62,19 +62,19 @@ class DetailOrderView extends StatelessWidget {
 
     createNewOrder(Order data) {
       //debugPrint('Name: ${data.name}, Password: ${data.password}');
-      return Future.delayed(const Duration(seconds: 3)).then((_) async {
+      return Future.delayed(const Duration(seconds: 1)).then((_) async {
         var responses = await oc.addNewOrder(data);
         if (responses >= 400 && responses < 500) {
           return Get.snackbar("Error", "Gagal menambahkan pesanan",
               colorText: Colors.white,
               snackPosition: SnackPosition.TOP,
-              backgroundColor: Colors.red.shade300);
+              backgroundColor: Colors.red.shade400);
         } else if (responses >= 500) {
           return Get.snackbar("Error", "Gagal menambahkan pesanan",
               colorText: Colors.white,
               snackPosition: SnackPosition.TOP,
-              backgroundColor: Colors.red.shade300);
-        } else if (responses >= 200) {
+              backgroundColor: Colors.red.shade400);
+        } else if (responses >= 200 && responses < 300) {
           Get.offAll(() => const OrderSuccessView());
         }
       });
@@ -106,6 +106,8 @@ class DetailOrderView extends StatelessWidget {
                         bodyHeight: bodyHeight,
                         str: nc.singleNurse.strNumber,
                         nurse: true,
+                        direct: false,
+                        image: nc.singleNurse.user!.image!,
                       ),
                       const Divider(
                         height: 8,
@@ -121,6 +123,8 @@ class DetailOrderView extends StatelessWidget {
                         bodyHeight: bodyHeight,
                         id: ac.user.id,
                         nurse: false,
+                        direct: false,
+                        image: ac.user.image,
                       ),
                       const Divider(
                         height: 8,
@@ -291,7 +295,9 @@ class PriceDetail extends StatelessWidget {
                     fontWeight: FontWeight.bold),
               ),
               Text(
-                'Rp. ${oc.order.value.totprice + 3000}',
+                NumberFormat.currency(
+                        locale: "id-ID", decimalDigits: 0, name: 'Rp ')
+                    .format(oc.order.value.totprice + 3000),
                 style: const TextStyle(
                     fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
