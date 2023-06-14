@@ -65,7 +65,10 @@ class EditForm extends GetView<EditFormController> {
             colorText: Colors.white,
             messageText: const Text(
               "Gagal update data",
-              style: TextStyle(fontSize: 16.0),
+              style: TextStyle(
+                fontSize: 16.0,
+                color: Colors.white,
+              ),
             ),
             snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.red.shade300);
@@ -74,7 +77,10 @@ class EditForm extends GetView<EditFormController> {
             colorText: Colors.white,
             messageText: const Text(
               "Gagal update data",
-              style: TextStyle(fontSize: 16.0),
+              style: TextStyle(
+                fontSize: 16.0,
+                color: Colors.white,
+              ),
             ),
             snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.red.shade300);
@@ -83,7 +89,10 @@ class EditForm extends GetView<EditFormController> {
         return Get.snackbar("Success", "Berhasil mengubah data",
             messageText: const Text(
               "Berhasil mengubah data",
-              style: TextStyle(fontSize: 16.0),
+              style: TextStyle(
+                fontSize: 16.0,
+                color: Colors.white,
+              ),
             ),
             colorText: Colors.white,
             snackPosition: SnackPosition.TOP,

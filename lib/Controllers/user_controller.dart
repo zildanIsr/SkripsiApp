@@ -6,6 +6,7 @@ import '../Models/userDetail_model.dart';
 import '../Models/user_model.dart';
 
 import 'package:http/http.dart' as http;
+import '../services/api_service.dart';
 import '../services/secure_storage.dart';
 import '../services/simple_storage.dart';
 import 'auth.dart';
@@ -13,21 +14,16 @@ import 'auth.dart';
 class UserController extends GetxController {
   final StorageService _storageService = StorageService();
   final SharedStorage sharedService = SharedStorage();
+  final APIService _apiservice = APIService();
   AuthController ac = Get.put(AuthController());
 
   var isLoading = false.obs;
   var isError = false.obs;
   var errmsg = ''.obs;
-  var userRole = 1.obs;
   var address = ''.obs;
 
   late User userdata;
   late UserDetail userbyid;
-
-  getRole() async {
-    var getuserRole = await sharedService.getIntValuesSF('role');
-    userRole(getuserRole);
-  }
 
   getaddress() async {
     var getuserAddress =
@@ -35,50 +31,14 @@ class UserController extends GetxController {
     address(getuserAddress);
   }
 
-  Future<User> getDataUser() async {
-    isLoading(true);
-    try {
-      Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/auth/getUser');
-
-      var token = await _storageService.readSecureData('token');
-
-      final response = await http.get(
-        url,
-        headers: {
-          "Authorization": "Bearer $token",
-        },
-      );
-      final data = json.decode(response.body)['data'];
-
-      if (data == null) {
-        //print('data tidak ditemukan');
-        isLoading(false);
-        isError(true);
-      }
-
-      //final Map<String, dynamic> data = nurseData;
-
-      //singleNurse = Nurse.fromJson(nurseData);
-      userdata = User.fromJson(data);
-      // await Future.delayed(
-      //     const Duration(seconds: 2), () => {userdata = User.fromJson(data)});
-
-      isLoading(false);
-      isError(false);
-
-      return userdata;
-    } catch (e) {
-      isLoading(false);
-      isError(true);
-      errmsg(e.toString());
-      throw Exception(e);
-    }
-  }
-
   Future<UserDetail> getDataUserbyId(int id) async {
     isLoading(true);
     try {
-      Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/auth/$id/getUser');
+      var geturl = _apiservice.getURL("v1/api/auth/$id/getUser");
+
+      Uri url = Uri.parse(geturl);
+
+      //Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/auth/$id/getUser');
 
       final response = await http.get(
         url,
@@ -114,7 +74,11 @@ class UserController extends GetxController {
   onUpdatedata(User user) async {
     isLoading(true);
     try {
-      Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/auth/update');
+      var geturl = _apiservice.getURL("v1/api/auth/update");
+
+      Uri url = Uri.parse(geturl);
+
+      //Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/auth/update');
 
       var token = await _storageService.readSecureData('token');
 

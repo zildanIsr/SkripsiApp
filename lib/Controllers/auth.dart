@@ -7,12 +7,14 @@ import 'package:http/http.dart' as http;
 import '../Models/user_model.dart';
 import '../Models/storage_item.dart';
 
+import '../services/api_service.dart';
 import '../services/secure_storage.dart';
 import '../services/simple_storage.dart';
 
 class AuthController extends GetxController {
   final StorageService _storageService = StorageService();
   final SharedStorage sharedService = SharedStorage();
+  final APIService _apiservice = APIService();
 
   var isLogin = false.obs;
   String? isToken;
@@ -31,7 +33,9 @@ class AuthController extends GetxController {
       var itemList = addtional!.values.toList();
       //print('${itemList[0]}, ${itemList[1]}');
 
-      Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/auth/register');
+      var geturl = _apiservice.getURL("v1/api/auth/register");
+
+      Uri url = Uri.parse(geturl);
 
       //print('Name: $email, Password: $password');
 
@@ -66,7 +70,11 @@ class AuthController extends GetxController {
 
   signInAuth(String email, String password) async {
     try {
-      Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/auth/login');
+      var geturl = _apiservice.getURL("v1/api/auth/login");
+
+      Uri url = Uri.parse(geturl);
+
+      //Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/auth/login');
 
       //print('Name: $email, Password: $password');
 
@@ -106,8 +114,9 @@ class AuthController extends GetxController {
 
   forgetPassword(String email) async {
     try {
-      Uri url =
-          Uri.parse('http://192.168.100.4:3500/v1/api/auth/$email/sendemail');
+      var geturl = _apiservice.getURL("v1/api/auth/$email/sendemail");
+
+      Uri url = Uri.parse(geturl);
 
       final response = await http.get(url, headers: {
         "Accept": "application/json",
@@ -143,10 +152,12 @@ class AuthController extends GetxController {
         return response.statusCode;
       }
 
-      // var resbody = json.decode(response.body)['data'];
+      var body = await response.stream.bytesToString();
 
-      // ac.user = User.fromJson(resbody);
-      // sharedService.addStringToSF(StorageItem('user', json.encode(resbody)));
+      var resbody = json.decode(body)['data'];
+
+      user = User.fromJson(resbody);
+      sharedService.addStringToSF(StorageItem('user', json.encode(resbody)));
 
       return response.statusCode;
     } catch (error) {

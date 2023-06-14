@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Models/perawat_model.dart';
-import '../Models/user_model.dart' as usermodel;
 import 'package:get/get.dart';
 
 import 'package:http/http.dart' as http;
 import '../Models/storage_item.dart';
+import '../services/api_service.dart';
 import '../services/secure_storage.dart';
 import '../services/simple_storage.dart';
 import '../widgets/bottom_navbar.dart';
@@ -34,6 +34,7 @@ class RegisNurseController extends GetxController {
   RxString errorText = 'Error'.obs;
   final StorageService _storageService = StorageService();
   final SharedStorage sharedService = SharedStorage();
+  final APIService _apiservice = APIService();
   AuthController ac = Get.put(AuthController());
 
   var isLoading = false.obs;
@@ -133,8 +134,9 @@ class RegisNurseController extends GetxController {
         // print(dayOpen);
         // print(education);
         // print(timeRange);
+        var geturl = _apiservice.getURL("v1/api/nurse/create");
 
-        Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/nurse/create');
+        Uri url = Uri.parse(geturl);
 
         var token = await _storageService.readSecureData('token');
 
@@ -191,8 +193,6 @@ class RegisNurseController extends GetxController {
           sharedService
               .addStringToSF(StorageItem('user', json.encode(resbody)));
 
-          ac.user = usermodel.User.fromJson(resbody);
-          //print('str:  ${nurse['strNumber']}');
           if (nurse != null) {
             ac.strNumber.value = nurse['strNumber'] ?? '';
             sharedService
@@ -207,7 +207,7 @@ class RegisNurseController extends GetxController {
 
           return Get.snackbar("Success", "",
               messageText: const Text(
-                "Berhasil mendaftar perawat",
+                "Berhasil, Silahkan Login Ulang",
                 style: TextStyle(fontSize: 16, color: Colors.white),
               ),
               colorText: Colors.white,

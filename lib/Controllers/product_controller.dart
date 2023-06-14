@@ -5,10 +5,13 @@ import 'package:get/get.dart';
 import '../Models/product_model.dart';
 import 'package:http/http.dart' as http;
 
+import '../services/api_service.dart';
 import '../services/secure_storage.dart';
 
 class ProductController extends GetxController {
   final StorageService _storageService = StorageService();
+  final APIService _apiservice = APIService();
+
   var isLoading = true.obs;
   var isError = false.obs;
   var errmsg = "".obs;
@@ -128,8 +131,12 @@ class ProductController extends GetxController {
     try {
       var token = await _storageService.readSecureData('token');
 
-      Uri url =
-          Uri.parse('http://192.168.100.4:3500/v1/api/product/productbyNurse');
+      var geturl = _apiservice.getURL("v1/api/product/productbyNurse");
+
+      Uri url = Uri.parse(geturl);
+
+      // Uri url =
+      //     Uri.parse('http://192.168.100.4:3500/v1/api/product/productbyNurse');
 
       final response = await http.get(
         url,
@@ -139,9 +146,6 @@ class ProductController extends GetxController {
       );
       final resListFormat = json.decode(response.body)['data'];
 
-      if (!resListFormat) {
-        return myProduct;
-      }
       //print(resListFormat);
       final List data = resListFormat;
 
@@ -226,7 +230,11 @@ class ProductController extends GetxController {
       try {
         var token = await _storageService.readSecureData('token');
 
-        Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/product/create');
+        var geturl = _apiservice.getURL("v1/api/product/create");
+
+        Uri url = Uri.parse(geturl);
+
+        //Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/product/create');
 
         Map<String, dynamic> data = {
           "price": selprice.value,
@@ -241,28 +249,13 @@ class ProductController extends GetxController {
             },
             body: json.encode(data));
 
-        if (response.statusCode >= 400 && response.statusCode < 500) {
+        if (response.statusCode >= 400) {
           Get.snackbar(
             'Error',
             '',
             colorText: Colors.white,
             messageText: const Text(
               'Gagal menambah layanan',
-              style: TextStyle(fontSize: 18.0, color: Colors.white),
-            ),
-            backgroundColor: Colors.red.shade400,
-            snackPosition: SnackPosition.TOP,
-          );
-          return;
-        }
-
-        if (response.statusCode >= 500) {
-          Get.snackbar(
-            'Error',
-            '',
-            colorText: Colors.white,
-            messageText: const Text(
-              'Gagal kesalahan server',
               style: TextStyle(fontSize: 18.0, color: Colors.white),
             ),
             backgroundColor: Colors.red.shade400,
@@ -312,8 +305,11 @@ class ProductController extends GetxController {
       if (index != -1) {
         var token = await _storageService.readSecureData('token');
 
-        Uri url =
-            Uri.parse('http://192.168.100.4:3500/v1/api/product/$id/delete');
+        var geturl = _apiservice.getURL("v1/api/product/$id/delete");
+
+        Uri url = Uri.parse(geturl);
+
+        //Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/product/$id/delete');
 
         final response = await http.delete(url, headers: {
           "Accept": "application/json",
@@ -399,8 +395,11 @@ class ProductController extends GetxController {
       try {
         var token = await _storageService.readSecureData('token');
 
-        Uri url =
-            Uri.parse('http://192.168.100.4:3500/v1/api/product/update/$id');
+        var geturl = _apiservice.getURL("v1/api/product/update/$id");
+
+        Uri url = Uri.parse(geturl);
+
+        //Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/product/update/$id');
 
         Map<String, dynamic> data = {
           "price": selprice.value,
@@ -452,7 +451,7 @@ class ProductController extends GetxController {
             '',
             colorText: Colors.white,
             messageText: const Text(
-              'Berhasil menambah layanan',
+              'Berhasil mengedit layanan',
               style: TextStyle(fontSize: 18.0, color: Colors.white),
             ),
             backgroundColor: Colors.green.shade400,

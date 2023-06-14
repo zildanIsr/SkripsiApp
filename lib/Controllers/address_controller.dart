@@ -6,12 +6,14 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 import '../Models/address_model.dart';
+import '../services/api_service.dart';
 import '../services/secure_storage.dart';
 import '../services/simple_storage.dart';
 
 class AddressController extends GetxController {
   final StorageService _storageService = StorageService();
   final SharedStorage sharedService = SharedStorage();
+  final APIService _apiservice = APIService();
 
   var isLoading = true.obs;
   var isError = false.obs;
@@ -59,7 +61,11 @@ class AddressController extends GetxController {
     try {
       var token = await _storageService.readSecureData('token');
 
-      Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/address/getbyuser');
+      var geturl = _apiservice.getURL("v1/api/address/getbyuser");
+
+      Uri url = Uri.parse(geturl);
+
+      //Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/address/getbyuser');
 
       final response = await http.get(
         url,
@@ -100,7 +106,11 @@ class AddressController extends GetxController {
   addNewAddress(AddressModel data) async {
     isLoading(true);
     try {
-      Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/address/create');
+      var geturl = _apiservice.getURL("v1/api/address/create");
+
+      Uri url = Uri.parse(geturl);
+
+      //Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/address/create');
 
       var token = await _storageService.readSecureData('token');
 
@@ -132,8 +142,12 @@ class AddressController extends GetxController {
     isLoading(true);
     try {
       var token = await _storageService.readSecureData('token');
-      Uri url =
-          Uri.parse('http://192.168.100.4:3500/v1/api/address/delete/$id');
+
+      var geturl = _apiservice.getURL("v1/api/address/delete/$id");
+
+      Uri url = Uri.parse(geturl);
+
+      //Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/address/delete/$id');
 
       final response = await http.delete(
         url,

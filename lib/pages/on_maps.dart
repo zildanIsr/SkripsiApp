@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Controllers/user_controller.dart';
+import 'package:flutter_application_1/Controllers/auth.dart';
 import 'package:flutter_application_1/Models/address_model.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -20,7 +20,7 @@ class OnMapView extends StatefulWidget {
 
 class OnMapViewState extends State<OnMapView> {
   AddressController ac = Get.find();
-  UserController uc = Get.put(UserController());
+  AuthController authC = Get.find();
 
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
@@ -66,7 +66,7 @@ class OnMapViewState extends State<OnMapView> {
             country: placemarks.reversed.last.country!,
             latitude: value.latitude,
             longitude: value.longitude,
-            userId: uc.userRole.value,
+            userId: authC.user.id!,
             updatedAt: DateTime.now(),
             createdAt: DateTime.now());
       });
@@ -108,7 +108,7 @@ class OnMapViewState extends State<OnMapView> {
 
   addNewAddress(AddressModel data) {
     //debugPrint('Name: ${data.name}, Password: ${data.password}');
-    return Future.delayed(const Duration(seconds: 3)).then((_) async {
+    return Future.delayed(const Duration(seconds: 1)).then((_) async {
       var responses = await ac.addNewAddress(data);
       if (responses >= 400 && responses < 500) {
         return Get.snackbar("Error", "Gagal menambahkan alamat",
@@ -318,7 +318,7 @@ class OnMapViewState extends State<OnMapView> {
           country: placemarks.reversed.last.country!,
           latitude: pos.latitude,
           longitude: pos.longitude,
-          userId: uc.userRole.value,
+          userId: authC.user.id!,
           updatedAt: DateTime.now(),
           createdAt: DateTime.now());
     });

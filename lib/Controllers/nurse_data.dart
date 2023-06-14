@@ -4,7 +4,11 @@ import 'package:get/get.dart';
 import '../Models/perawat_model.dart';
 import 'package:http/http.dart' as http;
 
+import '../services/api_service.dart';
+
 class NurseController extends GetxController {
+  final APIService _apiservice = APIService();
+
   var isLoading = true.obs;
   var isError = false.obs;
   //var str = ''.obs;
@@ -16,7 +20,11 @@ class NurseController extends GetxController {
   Future<Nurse> getNurseDatabySTR(String str) async {
     isLoading(true);
     try {
-      Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/nurse/$str');
+      var geturl = _apiservice.getURL("v1/api/nurse/$str");
+
+      Uri url = Uri.parse(geturl);
+
+      //Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/nurse/$str');
 
       final response = await http.get(url);
       final nurseData = json.decode(response.body)['data'];
@@ -29,10 +37,6 @@ class NurseController extends GetxController {
         isLoading(false);
         isError(true);
       }
-
-      //final Map<String, dynamic> data = nurseData;
-
-      //singleNurse = Nurse.fromJson(nurseData);
 
       await Future.delayed(const Duration(seconds: 2),
           () => {singleNurse = Nurse.fromJson(nurseData)});
