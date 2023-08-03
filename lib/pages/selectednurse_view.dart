@@ -41,7 +41,7 @@ class SelectedNurseView extends StatelessWidget {
             ? const CardSkeleton(
                 count: 4,
               )
-            : pc.listProduct.isEmpty
+            : pc.productNurse.isEmpty
                 ? const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -70,22 +70,16 @@ class SelectedNurseView extends StatelessWidget {
                       return PerawatListItem(
                         key: ValueKey(pc.productNurse[index].id),
                         thumbnail: ClipRRect(
-                          borderRadius: BorderRadius.circular(15),
-                          child: pc.productNurse[index].user.image != null
-                              ? Image.network(
-                                  pc.productNurse[index].user.image,
-                                  fit: BoxFit.fill,
-                                )
-                              : Image.asset(
-                                  'assets/nurse-boy-128.png',
-                                  fit: BoxFit.cover,
-                                ),
-                        ),
+                            borderRadius: BorderRadius.circular(15),
+                            child: Image.network(
+                              pc.productNurse[index].user.image,
+                              fit: BoxFit.fitWidth,
+                            )),
                         name: pc.productNurse[index].user.name,
                         category: pc.productNurse[index].category.name,
                         price: pc.productNurse[index].price,
-                        rating: pc.productNurse[index].perawat.rating!,
-                        strNumber: pc.productNurse[index].perawat.strNumber,
+                        rating: pc.productNurse[index].nurse.rating.toDouble(),
+                        strNumber: pc.productNurse[index].nurse.strNumber,
                         categoryId: pc.productNurse[index].categoryId,
                         productId: pc.productNurse[index].id,
                       );

@@ -5,11 +5,14 @@ import 'package:get/get.dart';
 
 import 'package:http/http.dart' as http;
 import '../Models/testimoni_model.dart';
+import '../services/api_service.dart';
 //import '../services/secure_storage.dart';
 //import '../services/simple_storage.dart';
 
 class RatingController extends GetxController {
   //final StorageService _storageService = StorageService();
+  final APIService _apiservice = APIService();
+
   var isLoading = true.obs;
   var isError = false.obs;
   var errmsg = ''.obs;
@@ -32,13 +35,13 @@ class RatingController extends GetxController {
   Future<List<RatingDetail>> getAllTestimoni(int id, int? rateValue) async {
     isLoading(true);
     try {
-      var url = 'http://192.168.100.4:3500/v1/api/rating/$id/getRatingsbyNurse';
+      var geturl = _apiservice.getURL("v1/api/rating/$id/getRatingsbyNurse");
 
       if (rateValue != null) {
-        url += '?rateValue=$rateValue';
+        geturl += '?rateValue=$rateValue';
       }
 
-      Uri newurl = Uri.parse(url);
+      Uri newurl = Uri.parse(geturl);
 
       final response = await http.get(
         newurl,
@@ -56,14 +59,12 @@ class RatingController extends GetxController {
       }
 
       final List data = resListFormat;
+      var list = <RatingDetail>[];
 
-      await Future.delayed(
-          const Duration(seconds: 2),
-          () => {
-                listTestimoni.value =
-                    data.map((e) => RatingDetail.fromJson(e)).toList()
-              });
+      await Future.delayed(const Duration(seconds: 2),
+          () => {list = data.map((e) => RatingDetail.fromJson(e)).toList()});
 
+      listTestimoni.value = list.reversed.toList();
       isLoading(false);
       isError(false);
 

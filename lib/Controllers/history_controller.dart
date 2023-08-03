@@ -6,11 +6,14 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../Models/historycard_model.dart';
 import '../Models/historydetail_model.dart';
+import '../services/api_service.dart';
 import '../services/secure_storage.dart';
 //import '../services/simple_storage.dart';
 
 class HistoryContoller extends GetxController {
   final StorageService _storageService = StorageService();
+  final APIService _apiservice = APIService();
+
   var isLoading = true.obs;
   var isError = false.obs;
   var errmsg = ''.obs;
@@ -24,9 +27,9 @@ class HistoryContoller extends GetxController {
 
   @override
   void onInit() {
+    super.onInit();
     getAllHistoryList();
     getAllHistoryFinished();
-    super.onInit();
   }
 
   @override
@@ -42,8 +45,9 @@ class HistoryContoller extends GetxController {
     try {
       var token = await _storageService.readSecureData('token');
 
-      Uri url =
-          Uri.parse('http://192.168.100.4:3500/v1/api/order/getorderbyUser');
+      var geturl = _apiservice.getURL("v1/api/order/getorderbyUser");
+
+      Uri url = Uri.parse(geturl);
 
       final response = await http.get(
         url,
@@ -79,8 +83,9 @@ class HistoryContoller extends GetxController {
     try {
       var token = await _storageService.readSecureData('token');
 
-      Uri url =
-          Uri.parse('http://192.168.100.4:3500/v1/api/order/getfinishedOrder');
+      var geturl = _apiservice.getURL("v1/api/order/getfinishedOrder");
+
+      Uri url = Uri.parse(geturl);
 
       final response = await http.get(
         url,
@@ -91,14 +96,16 @@ class HistoryContoller extends GetxController {
       final resListFormat = json.decode(response.body)['data'];
       //print(resListFormat);
       final List data = resListFormat;
+      var listHistory = <HistoryCardModel>[];
 
       await Future.delayed(
           const Duration(seconds: 2),
           () => {
-                listFinished.value =
+                listHistory =
                     data.map((e) => HistoryCardModel.fromJson(e)).toList()
               });
 
+      listFinished.value = listHistory.reversed.toList();
       isLoading(false);
       isError(false);
 
@@ -114,10 +121,9 @@ class HistoryContoller extends GetxController {
   Future<HistoryDetail> getDetailHistory(int id) async {
     isLoading(true);
     try {
-      //var token = await _storageService.readSecureData('token');
+      var geturl = _apiservice.getURL("v1/api/order/detailOrder/$id");
 
-      Uri url =
-          Uri.parse('http://192.168.100.4:3500/v1/api/order/detailOrder/$id');
+      Uri url = Uri.parse(geturl);
 
       final response = await http.get(
         url,
@@ -146,8 +152,11 @@ class HistoryContoller extends GetxController {
     isLoading(true);
     try {
       var token = await _storageService.readSecureData('token');
-      Uri url =
-          Uri.parse('http://192.168.100.4:3500/v1/api/order/update/status/$id');
+
+      var geturl = _apiservice.getURL("v1/api/order/update/status/$id");
+
+      Uri url = Uri.parse(geturl);
+
       Map<String, dynamic> data = {"status": status};
 
       final response = await http.patch(
@@ -210,8 +219,10 @@ class HistoryContoller extends GetxController {
     isLoading(true);
     try {
       var token = await _storageService.readSecureData('token');
-      Uri url = Uri.parse(
-          'http://192.168.100.4:3500/v1/api/order/update/finished/$id');
+
+      var geturl = _apiservice.getURL("v1/api/order/update/finished/$id");
+
+      Uri url = Uri.parse(geturl);
 
       final response = await http.patch(
         url,
@@ -272,7 +283,11 @@ class HistoryContoller extends GetxController {
     isLoading(true);
     try {
       var token = await _storageService.readSecureData('token');
-      Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/rating/create');
+
+      var geturl = _apiservice.getURL("v1/api/rating/create");
+
+      Uri url = Uri.parse(geturl);
+
       Map<String, dynamic> data = {
         "orderId": orderId,
         "perawatId": nurseId,

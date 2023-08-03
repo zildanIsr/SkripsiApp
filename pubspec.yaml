@@ -51,6 +51,9 @@ dependencies:
   page_transition: ^2.0.9
   image_picker: ^0.8.7+5
   url_launcher: ^6.1.11
+  cloudinary_public: ^0.21.0
+  timeago: ^3.3.0
+  file_picker: ^5.3.3
 
 dev_dependencies:
   flutter_test:

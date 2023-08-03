@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 
 class RatingNurse extends StatelessWidget {
   const RatingNurse({
+    Key? key,
     required this.sizeIcon,
     required this.alignSelected,
     required this.rate,
-    Key? key,
+    required this.mb,
+    required this.mt,
   }) : super(key: key);
 
   final MainAxisAlignment alignSelected;
   final double sizeIcon;
   final String rate;
+  final double mb;
+  final double mt;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +22,7 @@ class RatingNurse extends StatelessWidget {
       mainAxisAlignment: alignSelected,
       children: <Widget>[
         Container(
-          padding: const EdgeInsets.symmetric(vertical: 2.0),
+          margin: EdgeInsets.fromLTRB(0, mt, 0, mb),
           decoration: BoxDecoration(
               //border: Border.all(color: Colors.black12),
               borderRadius: BorderRadius.circular(4.0)),

@@ -12,38 +12,38 @@ String searchModelToJson(List<SearchModel> data) =>
 
 class SearchModel {
   String name;
-  dynamic image;
-  Perawat perawat;
+  String image;
+  Nurse nurse;
 
   SearchModel({
     required this.name,
     required this.image,
-    required this.perawat,
+    required this.nurse,
   });
 
   factory SearchModel.fromJson(Map<String, dynamic> json) => SearchModel(
         name: json["name"],
         image: json["image"],
-        perawat: Perawat.fromJson(json["Perawat"]),
+        nurse: Nurse.fromJson(json["Nurse"]),
       );
 
   Map<String, dynamic> toJson() => {
         "name": name,
         "image": image,
-        "Perawat": perawat.toJson(),
+        "Nurse": nurse.toJson(),
       };
 }
 
-class Perawat {
+class Nurse {
   int id;
   String strNumber;
 
-  Perawat({
+  Nurse({
     required this.id,
     required this.strNumber,
   });
 
-  factory Perawat.fromJson(Map<String, dynamic> json) => Perawat(
+  factory Nurse.fromJson(Map<String, dynamic> json) => Nurse(
         id: json["id"],
         strNumber: json["strNumber"],
       );

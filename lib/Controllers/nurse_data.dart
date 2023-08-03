@@ -38,7 +38,7 @@ class NurseController extends GetxController {
         isError(true);
       }
 
-      await Future.delayed(const Duration(seconds: 2),
+      await Future.delayed(const Duration(seconds: 3),
           () => {singleNurse = Nurse.fromJson(nurseData)});
 
       isLoading(false);

@@ -21,5 +21,6 @@ List<Kategori> kategoriList = <Kategori>[
   ),
   Kategori(3, Icons.health_and_safety_outlined, 'Tensi'),
   Kategori(4, Icons.healing, 'Rawat Luka'),
-  Kategori(5, Icons.elderly, 'Rawat Lansia'),
+  Kategori(5, Icons.elderly, 'Lansia'),
+  Kategori(6, Icons.female, 'Ibu Anak'),
 ];

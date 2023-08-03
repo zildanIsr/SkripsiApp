@@ -78,7 +78,7 @@ class ProfileDetail extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Container(
-            height: bodyHeight * 0.45,
+            height: bodyHeight > 700 ? bodyHeight * 0.45 : bodyHeight * 0.5,
             width: mediaQueryWidht,
             decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -95,12 +95,12 @@ class ProfileDetail extends StatelessWidget {
                 Positioned(
                   left: 50,
                   right: 50,
-                  top: 80,
+                  top: bodyHeight > 700 ? 80 : 70,
                   child: Column(
                     children: [
                       CircleAvatar(
                         backgroundColor: Colors.white,
-                        radius: 75,
+                        radius: 70,
                         child: CircleAvatar(
                           backgroundColor: Colors.transparent,
                           backgroundImage: uc.userbyid.image != null
@@ -108,7 +108,7 @@ class ProfileDetail extends StatelessWidget {
                               : const AssetImage(
                                   'assets/doctor',
                                 ) as ImageProvider<Object>?,
-                          radius: 70,
+                          radius: 65,
                         ),
                       ),
                       const SizedBox(
@@ -120,7 +120,7 @@ class ProfileDetail extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.clip,
                         style: const TextStyle(
-                            fontSize: 22,
+                            fontSize: 20,
                             fontWeight: FontWeight.w500,
                             color: Colors.white),
                       )
@@ -128,13 +128,13 @@ class ProfileDetail extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                    bottom: -50,
+                    bottom: -40,
                     left: 100,
                     right: 100,
                     child: Card(
                       elevation: 4.0,
                       child: Container(
-                        height: 80,
+                        height: 75,
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,

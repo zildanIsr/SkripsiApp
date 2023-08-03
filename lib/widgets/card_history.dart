@@ -20,7 +20,8 @@ class ItemHistoryPasien extends StatelessWidget {
       required this.isFinished,
       required this.id,
       required this.isRated,
-      required this.perawatId});
+      required this.perawatId,
+      required this.datetime});
 
   final int id;
   final String orderNumber;
@@ -31,6 +32,7 @@ class ItemHistoryPasien extends StatelessWidget {
   final int perawatId;
   final bool isFinished;
   final bool isRated;
+  final String datetime;
 
   @override
   Widget build(BuildContext context) {
@@ -116,8 +118,8 @@ class ItemHistoryPasien extends StatelessWidget {
       //color: Colors.amber,
       constraints: BoxConstraints(
           minWidth: MediaQuery.of(context).size.width,
-          maxHeight: 225,
-          minHeight: 180),
+          maxHeight: 250,
+          minHeight: 190),
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Card(
         //color: Colors.green,
@@ -172,7 +174,7 @@ class ItemHistoryPasien extends StatelessWidget {
                           width: 8.0,
                         ),
                         Text(
-                          orderNumber.substring(0, 20),
+                          orderNumber.substring(0, 12),
                           overflow: TextOverflow.clip,
                           softWrap: false,
                           maxLines: 1,
@@ -194,7 +196,7 @@ class ItemHistoryPasien extends StatelessWidget {
                         const Text(
                           'Kategori : ',
                           style: TextStyle(
-                              fontSize: 18.0,
+                              fontSize: 16.0,
                               color: Colors.black45,
                               fontWeight: FontWeight.w500),
                         ),
@@ -211,7 +213,7 @@ class ItemHistoryPasien extends StatelessWidget {
                         Text(
                           category.name,
                           style: const TextStyle(
-                              fontSize: 18.0, fontWeight: FontWeight.w500),
+                              fontSize: 16.0, fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
@@ -225,7 +227,7 @@ class ItemHistoryPasien extends StatelessWidget {
                         const Text(
                           'Harga : ',
                           style: TextStyle(
-                              fontSize: 18.0,
+                              fontSize: 16.0,
                               color: Colors.black45,
                               fontWeight: FontWeight.w500),
                         ),
@@ -239,7 +241,31 @@ class ItemHistoryPasien extends StatelessWidget {
                                   name: 'Rp ')
                               .format(amountPrice),
                           style: const TextStyle(
-                              fontSize: 18.0, fontWeight: FontWeight.w500),
+                              fontSize: 16.0, fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 8.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Tanggal : ',
+                          style: TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.black45,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(
+                          width: 4.0,
+                        ),
+                        Text(
+                          datetime,
+                          style: const TextStyle(
+                              fontSize: 16.0, fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),

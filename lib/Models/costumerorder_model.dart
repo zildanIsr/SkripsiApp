@@ -12,27 +12,27 @@ class Order {
   int? id;
   String orderId;
   int productId;
-  int perawatId;
+  int? perawatId;
   int? userId;
-  int uAddressId;
+  int? uAddressId;
   int totprice;
   int pacientAmount;
   DateTime jadwalPesanan;
-  DateTime updatedAt;
-  DateTime createdAt;
+  DateTime? updatedAt;
+  DateTime? createdAt;
 
   Order({
     this.id,
     required this.orderId,
     required this.productId,
-    required this.perawatId,
+    this.perawatId,
     this.userId,
-    required this.uAddressId,
+    this.uAddressId,
     required this.totprice,
     required this.pacientAmount,
     required this.jadwalPesanan,
-    required this.updatedAt,
-    required this.createdAt,
+    this.updatedAt,
+    this.createdAt,
   });
 
   factory Order.fromJson(Map<String, dynamic> json) => Order(
@@ -59,7 +59,7 @@ class Order {
         "totprice": totprice,
         "pacientAmount": pacientAmount,
         "jadwalPesanan": jadwalPesanan.toIso8601String(),
-        "updatedAt": updatedAt.toIso8601String(),
-        "createdAt": createdAt.toIso8601String(),
+        "updatedAt": updatedAt?.toIso8601String(),
+        "createdAt": createdAt?.toIso8601String(),
       };
 }

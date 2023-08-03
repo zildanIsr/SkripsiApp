@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:http/http.dart' as http;
+import '../services/api_service.dart';
 import '../services/secure_storage.dart';
 
 class ReportController extends GetxController {
   final StorageService _storageService = StorageService();
+  final APIService _apiservice = APIService();
+
   var isLoading = true.obs;
   var isError = false.obs;
   var errmsg = ''.obs;
@@ -18,7 +21,11 @@ class ReportController extends GetxController {
     isLoading(true);
     try {
       var token = await _storageService.readSecureData('token');
-      Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/report/create');
+
+      var geturl = _apiservice.getURL("v1/api/report/create");
+
+      Uri url = Uri.parse(geturl);
+
       Map<String, dynamic> data = {
         "orderId": orderId,
         "perawatId": reportedId,

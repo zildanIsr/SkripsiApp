@@ -5,8 +5,12 @@ import 'package:get/get.dart';
 import '../Models/historydetail_model.dart';
 import 'package:http/http.dart' as http;
 
+import '../services/api_service.dart';
+
 class HistoryDetailController extends GetxController {
   //final StorageService _storageService = StorageService();
+  final APIService _apiservice = APIService();
+
   var isLoading = true.obs;
   var isError = false.obs;
   var errmsg = ''.obs;
@@ -17,9 +21,9 @@ class HistoryDetailController extends GetxController {
     isLoading(true);
     try {
       //var token = await _storageService.readSecureData('token');
+      var geturl = _apiservice.getURL("v1/api/order/detailOrder/$id");
 
-      Uri url =
-          Uri.parse('http://192.168.100.4:3500/v1/api/order/detailOrder/$id');
+      Uri url = Uri.parse(geturl);
 
       final response = await http.get(
         url,

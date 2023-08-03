@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter_application_1/Controllers/nurse_data.dart';
 import 'package:flutter_application_1/Controllers/rating_controller.dart';
 import 'package:flutter_application_1/widgets/skeleton.dart';
@@ -61,7 +62,7 @@ class _DetailRatingState extends State<DetailRating>
               indicatorColor: Colors.black26,
               tabs: <Tab>[
                 Tab(
-                  height: height * 0.15,
+                  height: height * 0.16,
                   child: SizedBox(
                       //color: Colors.grey,
                       width: double.infinity,
@@ -368,6 +369,8 @@ class ListItem extends StatelessWidget {
                     rate: rc.listTestimoni[index].rate,
                     categoryId:
                         rc.listTestimoni[index].order.product.categoryId,
+                    image: rc.listTestimoni[index].user.image,
+                    created: rc.listTestimoni[index].updatedAt,
                   );
                 }));
   }
@@ -380,16 +383,27 @@ class RatingCard extends StatelessWidget {
     required this.description,
     required this.rate,
     required this.categoryId,
+    required this.image,
+    required this.created,
   });
   final String pacientName;
   final String description;
+  final dynamic image;
   final int rate;
   final int categoryId;
+  final DateTime created;
 
   @override
   Widget build(BuildContext context) {
     CategoryController cc = Get.put(CategoryController());
     Kategori category = cc.getCategory(categoryId);
+    timeago.setLocaleMessages('id', timeago.IdMessages());
+
+    final datenow = DateTime.now();
+    var duration = datenow.difference(created);
+
+    final time = datenow.subtract(Duration(hours: duration.inHours));
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8.0),
       elevation: 4,
@@ -399,12 +413,18 @@ class RatingCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           ListTile(
-            leading: const Icon(Icons.album, color: Colors.cyan, size: 45),
+            leading: CircleAvatar(
+              backgroundColor: Colors.transparent,
+              backgroundImage: image == null
+                  ? const AssetImage('assets/doctor.png')
+                      as ImageProvider<Object>?
+                  : NetworkImage(image, scale: 1.0),
+            ),
             title: Text(
               pacientName,
               style: const TextStyle(fontSize: 16),
             ),
-            subtitle: const Text('1 bulan yang lalu'),
+            subtitle: Text(timeago.format(time, locale: 'id')),
           ),
           Container(
             width: double.infinity,

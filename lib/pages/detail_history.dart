@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+import '../Controllers/address_controller.dart';
 import '../Controllers/category_controller.dart';
 import '../Controllers/detailhistory_controller.dart';
 import '../Controllers/history_controller.dart';
@@ -132,10 +133,10 @@ class DetailDataOrder extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 32.0),
                 child: ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
                       hcn.sendRating(
-                          hc.detailhistory.perawatId, hc.detailhistory.id);
+                          hc.detailhistory.nurseId, hc.detailhistory.id);
                       hc.getDetailHistory(hc.detailhistory.id);
+                      Navigator.of(context).pop();
                     },
                     child: const Text('Kirim')))
           ],
@@ -175,6 +176,12 @@ class DetailDataOrder extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: TextFormField(
+                validator: (val) {
+                  if (val!.isEmpty) {
+                    return 'Tidak boleh kosong';
+                  }
+                  return null;
+                },
                 controller: rc.descText,
                 maxLines: 1,
                 keyboardType: TextInputType.text,
@@ -189,9 +196,10 @@ class DetailDataOrder extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 32.0),
                 child: ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
                       rc.sendReport(
-                          hc.detailhistory.perawatId, hc.detailhistory.id);
+                          hc.detailhistory.nurseId, hc.detailhistory.id);
+                      hc.getDetailHistory(hc.detailhistory.id);
+                      Navigator.of(context).pop();
                     },
                     child: const Text('Kirim')))
           ],
@@ -216,6 +224,9 @@ class DetailDataOrder extends StatelessWidget {
           dateTimeOrder: hc.detailhistory.jadwalPesanan,
           orderNumber: hc.detailhistory.orderId,
           isFinished: hc.detailhistory.isFinished,
+          latitude: hc.detailhistory.address.latitude.toString(),
+          longitude: hc.detailhistory.address.longitude.toString(),
+          isDisplay: hc.detailhistory.userId == ac.user.id ? false : true,
         ),
         const Divider(
           height: 8,
@@ -225,14 +236,14 @@ class DetailDataOrder extends StatelessWidget {
         UserInformation(
           title1: 'Nomor STR',
           title2: 'Telepon',
-          userName: hc.detailhistory.perawat.user.name,
-          desc_1: hc.detailhistory.perawat.strNumber,
-          desc_2: hc.detailhistory.perawat.user.phoneNumber,
+          userName: hc.detailhistory.nurse.user.name,
+          desc_1: hc.detailhistory.nurse.strNumber,
+          desc_2: hc.detailhistory.nurse.user.phoneNumber,
           bodyHeight: bodyHeight,
-          str: hc.detailhistory.perawat.strNumber,
+          str: hc.detailhistory.nurse.strNumber,
           nurse: true,
           direct: true,
-          image: hc.detailhistory.perawat.user.image,
+          image: hc.detailhistory.nurse.user.image,
         ),
         const Divider(
           height: 8,
@@ -331,6 +342,9 @@ class OrderInformation extends StatelessWidget {
     required this.dateTimeOrder,
     required this.iconCategory,
     required this.isFinished,
+    required this.latitude,
+    required this.longitude,
+    required this.isDisplay,
   }) : super(key: key);
 
   final String kategoriname;
@@ -341,10 +355,57 @@ class OrderInformation extends StatelessWidget {
   final String orderNumber;
   final DateTime dateTimeOrder;
   final IconData iconCategory;
-  final bool isFinished;
+  final bool isFinished, isDisplay;
+  final String latitude, longitude;
 
   @override
   Widget build(BuildContext context) {
+    AddressController ac = Get.put(AddressController());
+
+    void directionMapUrl() {
+      Get.bottomSheet(Container(
+        width: MediaQuery.of(context).size.width,
+        height: 150.0,
+        padding: const EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 0.0),
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+          color: Colors.white,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text(
+              'Buka Peta Untuk Arah',
+              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(
+              height: 8.0,
+            ),
+            const Text(
+              'Memulai arah dengan lokasi ini?',
+              style: TextStyle(fontSize: 16.0),
+            ),
+            const SizedBox(
+              height: 16.0,
+            ),
+            Container(
+                width: double.infinity,
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: ElevatedButton(
+                    onPressed: () {
+                      //ac.getParmachiNearby(latitude, longitude);
+                      ac.launchMapsUrl(alamat);
+                    },
+                    child: const Text('Mulai')))
+          ],
+        ),
+      ));
+    }
+
     initializeDateFormatting();
     return Container(
       padding: const EdgeInsets.all(16.0),
@@ -510,10 +571,39 @@ class OrderInformation extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(
-                    alamat,
-                    maxLines: 3,
-                    style: const TextStyle(fontSize: 16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        alamat,
+                        maxLines: 3,
+                        style: const TextStyle(fontSize: 16.0),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          directionMapUrl();
+                          //ac.launchMapsUrl(alamat);
+                          // Clipboard.setData(ClipboardData(text: alamat));
+                          // Get.snackbar('Alamat Tersalin', '',
+                          //     colorText: Colors.black,
+                          //     snackPosition: SnackPosition.BOTTOM,
+                          //     snackStyle: SnackStyle.GROUNDED);
+                        },
+                        child: isDisplay
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text(
+                                  'Lihat Rute',
+                                  style: TextStyle(
+                                      color: Colors.blue.shade600,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              )
+                            : Container(),
+                      )
+                    ],
                   ),
                 ),
               ]),

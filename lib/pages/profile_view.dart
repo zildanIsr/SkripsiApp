@@ -35,37 +35,38 @@ class AccountSetting extends StatelessWidget {
     final bodyHeight = mediaQueryHeight - MediaQuery.of(context).padding.top;
 
     AuthController ac = Get.find();
-    return Center(
-      child: SizedBox(
+
+    return SizedBox(
         width: mediaQueryWidht,
         height: bodyHeight,
-        child: Stack(
+        child: Column(
           children: [
-            Positioned(
-              child: Container(
-                width: double.infinity,
-                height: bodyHeight * 0.25,
-                decoration: BoxDecoration(
-                    color: ac.user.roleId == 1
-                        ? Colors.green.shade300
-                        : Colors.pink.shade400,
-                    borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(150),
-                        bottomRight: Radius.circular(150))),
+            SizedBox(
+              height: bodyHeight * 0.31,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Positioned(
+                    child: Container(
+                      width: double.infinity,
+                      height: bodyHeight * 0.2,
+                      decoration: BoxDecoration(
+                          color: ac.user.roleId == 1
+                              ? Colors.green.shade300
+                              : Colors.pink.shade400,
+                          borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(170),
+                              bottomRight: Radius.circular(170))),
+                    ),
+                  ),
+                  const ImageCircle(),
+                ],
               ),
             ),
-            const ImageCircle(),
-            ProfileCard(
-              bodyHeight: bodyHeight,
-              mediaQueryWidht: mediaQueryWidht,
-            ),
-            ButtonList(
-              mediaQueryWidht: mediaQueryWidht,
-            )
+            const ProfileCard(),
+            const ButtonList()
           ],
-        ),
-      ),
-    );
+        ));
   }
 }
 
@@ -99,27 +100,41 @@ class _ImageCircleState extends State<ImageCircle> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQueryHeight = MediaQuery.of(context).size.height;
+
+    final bodyHeight = mediaQueryHeight - MediaQuery.of(context).padding.top;
     return Positioned(
-      top: 85,
+      top: bodyHeight > 700 ? 85 : 55,
       left: 0,
       right: 0,
       child: Stack(
           alignment: AlignmentDirectional.center,
           clipBehavior: Clip.none,
           children: [
-            CircleAvatar(
-              backgroundColor: Colors.white,
-              radius: 75,
-              child: CircleAvatar(
-                backgroundColor: Colors.transparent,
-                backgroundImage: ac.user.image == null
-                    ? _pickedImage != null
-                        ? FileImage(File(_pickedImage!.path))
-                        : const AssetImage('assets/doctor.png')
-                            as ImageProvider<Object>?
-                    : NetworkImage(ac.user.image),
-                radius: 70,
-              ),
+            Obx(
+              () => ac.isLoading.value
+                  ? const CircleAvatar(
+                      backgroundColor: Colors.white,
+                      radius: 70,
+                      child: CircleAvatar(
+                        //backgroundImage: FileImage(File(_pickedImage!.path)),
+                        backgroundColor: Colors.black38,
+                        radius: 65,
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : CircleAvatar(
+                      backgroundColor: Colors.white,
+                      radius: 70,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        backgroundImage: _pickedImage != null
+                            ? FileImage(File(_pickedImage!.path))
+                            : NetworkImage(ac.user.image)
+                                as ImageProvider<Object>?,
+                        radius: 65,
+                      ),
+                    ),
             ),
             Positioned(
               bottom: -15,
@@ -143,326 +158,347 @@ class _ImageCircleState extends State<ImageCircle> {
 class ProfileCard extends StatelessWidget {
   const ProfileCard({
     Key? key,
-    required this.bodyHeight,
-    required this.mediaQueryWidht,
   }) : super(key: key);
-
-  final double bodyHeight;
-  final double mediaQueryWidht;
 
   @override
   Widget build(BuildContext context) {
     AuthController user = Get.find();
 
-    return Positioned(
-        top: 250,
-        left: 0,
-        right: 0,
-        child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            //color: Colors.green,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Card(
-                  elevation: 4.0,
-                  child: SizedBox(
-                    width: mediaQueryWidht * 0.55,
-                    child: Center(
-                        child: Column(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Text(
-                            user.user.name,
-                            textAlign: TextAlign.center,
-                            maxLines: 1,
-                            overflow: TextOverflow.clip,
-                            style: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Text(
-                            user.user.roleId == 1 ? 'PASIEN' : 'PERAWAT',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                letterSpacing: 2,
-                                color: user.user.roleId == 1
-                                    ? Colors.green.shade500
-                                    : Colors.pinkAccent,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                      ],
-                    )),
-                  ),
-                ),
-              ],
-            )));
+    return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        //color: Colors.green,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Card(
+              elevation: 4.0,
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.55,
+                child: Center(
+                    child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Text(
+                        user.user.name,
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.clip,
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Text(
+                        user.user.roleId == 1 ? 'PASIEN' : 'PERAWAT',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            letterSpacing: 2,
+                            color: user.user.roleId == 1
+                                ? Colors.green.shade500
+                                : Colors.pinkAccent,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ],
+                )),
+              ),
+            ),
+          ],
+        ));
   }
 }
 
 class ButtonList extends StatelessWidget {
   const ButtonList({
     super.key,
-    required this.mediaQueryWidht,
   });
-
-  final double mediaQueryWidht;
 
   @override
   Widget build(BuildContext context) {
     AuthController ac = Get.find();
 
-    return Positioned(
-      bottom: ac.user.roleId == 2 ? 0 : 30,
-      left: 8,
-      right: 8,
-      child: SizedBox(
-          width: mediaQueryWidht,
-          //color: Colors.amber,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: Column(
+    final mediaQueryHeight = MediaQuery.of(context).size.height;
+    final bodyHeight = mediaQueryHeight - MediaQuery.of(context).padding.top;
+
+    Future<bool> showExitPopup() async {
+      return await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Logout'),
+              content: const Text('Anda yakin keluar dari akun ini?'),
+              actions: [
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.pink)),
+                  onPressed: () {
+                    ac.logout();
+                    Get.offAll(() => AuthView(), transition: Transition.fade);
+                    Get.deleteAll();
+                  },
+                  child: const Text('Iya'),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Tidak'),
+                ),
+              ],
+            ),
+          ) ??
+          false;
+    }
+
+    return Container(
+        width: MediaQuery.of(context).size.width,
+        //color: Colors.amber,
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        Get.to(
+                            () => DetailPengguna(
+                                  id: ac.user.id,
+                                ), binding: BindingsBuilder(() {
+                          Get.put(UserController());
+                        }));
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.account_circle_rounded,
+                              ),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              Text(
+                                'Detail Akun',
+                                style: TextStyle(
+                                    fontSize: bodyHeight >= 700 ? 16 : 14,
+                                    color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                          const Icon(
+                            Icons.arrow_forward_outlined,
+                          ),
+                        ],
+                      )),
+                  const Divider(),
+                  ac.user.roleId == 2
+                      ? Column(
+                          children: [
+                            TextButton(
+                                onPressed: () {
+                                  Get.to(
+                                      () => DetailPerawat(
+                                            strNumber: ac.strNumber.value,
+                                          ), binding: BindingsBuilder(() {
+                                    Get.put(NurseController());
+                                  }));
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.person_4_rounded,
+                                        ),
+                                        const SizedBox(
+                                          width: 8,
+                                        ),
+                                        Text(
+                                          'Detail Perawat',
+                                          style: TextStyle(
+                                              fontSize:
+                                                  bodyHeight >= 700 ? 16 : 14,
+                                              color: Colors.grey),
+                                        ),
+                                      ],
+                                    ),
+                                    const Icon(
+                                      Icons.arrow_forward_outlined,
+                                    ),
+                                  ],
+                                )),
+                            const Divider(),
+                          ],
+                        )
+                      : Container(),
+                  TextButton(
+                      onPressed: () {
+                        Get.toNamed('/edit-profil');
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.edit,
+                              ),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              Text(
+                                'Edit Profil',
+                                style: TextStyle(
+                                    fontSize: bodyHeight >= 700 ? 16 : 14,
+                                    color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                          const Icon(
+                            Icons.arrow_forward_outlined,
+                          ),
+                        ],
+                      )),
+                  const Divider(),
+                  ac.user.roleId == 1
+                      ? Column(
+                          children: [
+                            TextButton(
+                                onPressed: () {
+                                  Get.toNamed('/regis-perawat');
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.app_registration,
+                                        ),
+                                        const SizedBox(
+                                          width: 8,
+                                        ),
+                                        Text(
+                                          'Register Perawat',
+                                          style: TextStyle(
+                                              fontSize:
+                                                  bodyHeight >= 700 ? 16 : 14,
+                                              color: Colors.grey),
+                                        ),
+                                      ],
+                                    ),
+                                    const Icon(
+                                      Icons.arrow_forward_outlined,
+                                    ),
+                                  ],
+                                )),
+                            const Divider(),
+                          ],
+                        )
+                      : Container(),
+                  ac.user.roleId == 2
+                      ? Column(
+                          children: [
+                            TextButton(
+                                onPressed: () {
+                                  Get.toNamed('/layanan-hc');
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.medical_services,
+                                        ),
+                                        const SizedBox(
+                                          width: 8,
+                                        ),
+                                        Text(
+                                          'Layanan Homecare',
+                                          style: TextStyle(
+                                              fontSize:
+                                                  bodyHeight >= 700 ? 16 : 14,
+                                              color: Colors.grey),
+                                        ),
+                                      ],
+                                    ),
+                                    const Icon(
+                                      Icons.arrow_forward_outlined,
+                                    ),
+                                  ],
+                                )),
+                            const Divider(),
+                          ],
+                        )
+                      : Container(),
+                  TextButton(
+                      onPressed: () {
+                        Get.toNamed('/address-user');
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.bookmark,
+                              ),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              Text(
+                                'Alamat Tersimpan',
+                                style: TextStyle(
+                                    fontSize: bodyHeight >= 700 ? 16 : 14,
+                                    color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                          const Icon(
+                            Icons.arrow_forward_outlined,
+                          ),
+                        ],
+                      )),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(bodyHeight >= 700 ? 16 : 2),
+              child: TextButton(
+                onPressed: () {
+                  showExitPopup();
+                  // ac.logout();
+                  // Get.offAll(() => AuthView(), transition: Transition.fade);
+                  // Get.deleteAll();
+                },
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    TextButton(
-                        onPressed: () {
-                          Get.to(
-                              () => DetailPengguna(
-                                    id: ac.user.id,
-                                  ), binding: BindingsBuilder(() {
-                            Get.put(UserController());
-                          }));
-                        },
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.account_circle_rounded,
-                                ),
-                                SizedBox(
-                                  width: 8,
-                                ),
-                                Text(
-                                  'Detail Akun',
-                                  style: TextStyle(
-                                      fontSize: 18, color: Colors.grey),
-                                ),
-                              ],
-                            ),
-                            Icon(
-                              Icons.arrow_forward_outlined,
-                            ),
-                          ],
-                        )),
-                    const Divider(),
-                    ac.user.roleId == 2
-                        ? Column(
-                            children: [
-                              TextButton(
-                                  onPressed: () {
-                                    Get.to(
-                                        () => DetailPerawat(
-                                              strNumber: ac.strNumber.value,
-                                            ), binding: BindingsBuilder(() {
-                                      Get.put(NurseController());
-                                    }));
-                                  },
-                                  child: const Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.person_4_rounded,
-                                          ),
-                                          SizedBox(
-                                            width: 8,
-                                          ),
-                                          Text(
-                                            'Detail Perawat',
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                color: Colors.grey),
-                                          ),
-                                        ],
-                                      ),
-                                      Icon(
-                                        Icons.arrow_forward_outlined,
-                                      ),
-                                    ],
-                                  )),
-                              const Divider(),
-                            ],
-                          )
-                        : Container(),
-                    TextButton(
-                        onPressed: () {
-                          Get.toNamed('/edit-profil');
-                        },
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.edit,
-                                ),
-                                SizedBox(
-                                  width: 8,
-                                ),
-                                Text(
-                                  'Edit Profil',
-                                  style: TextStyle(
-                                      fontSize: 18, color: Colors.grey),
-                                ),
-                              ],
-                            ),
-                            Icon(
-                              Icons.arrow_forward_outlined,
-                            ),
-                          ],
-                        )),
-                    const Divider(),
-                    ac.user.roleId == 1
-                        ? Column(
-                            children: [
-                              TextButton(
-                                  onPressed: () {
-                                    Get.toNamed('/regis-perawat');
-                                  },
-                                  child: const Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.app_registration,
-                                          ),
-                                          SizedBox(
-                                            width: 8,
-                                          ),
-                                          Text(
-                                            'Register Perawat',
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                color: Colors.grey),
-                                          ),
-                                        ],
-                                      ),
-                                      Icon(
-                                        Icons.arrow_forward_outlined,
-                                      ),
-                                    ],
-                                  )),
-                              const Divider(),
-                            ],
-                          )
-                        : Container(),
-                    ac.user.roleId == 2
-                        ? Column(
-                            children: [
-                              TextButton(
-                                  onPressed: () {
-                                    Get.toNamed('/layanan-hc');
-                                  },
-                                  child: const Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.medical_services,
-                                          ),
-                                          SizedBox(
-                                            width: 8,
-                                          ),
-                                          Text(
-                                            'Layanan Homecare',
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                color: Colors.grey),
-                                          ),
-                                        ],
-                                      ),
-                                      Icon(
-                                        Icons.arrow_forward_outlined,
-                                      ),
-                                    ],
-                                  )),
-                              const Divider(),
-                            ],
-                          )
-                        : Container(),
-                    TextButton(
-                        onPressed: () {
-                          Get.toNamed('/address-user');
-                        },
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.bookmark,
-                                ),
-                                SizedBox(
-                                  width: 8,
-                                ),
-                                Text(
-                                  'Alamat Tersimpan',
-                                  style: TextStyle(
-                                      fontSize: 18, color: Colors.grey),
-                                ),
-                              ],
-                            ),
-                            Icon(
-                              Icons.arrow_forward_outlined,
-                            ),
-                          ],
-                        )),
+                    Icon(
+                      Icons.logout,
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Text(
+                      'Keluar',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: TextButton(
-                  onPressed: () {
-                    ac.logout();
-                    Get.deleteAll();
-                    Get.offAll(() => AuthView(), transition: Transition.fade);
-                  },
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.logout,
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                        'Keluar',
-                        style: TextStyle(fontSize: 18, color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            ],
-          )),
-    );
+            )
+          ],
+        ));
   }
 }

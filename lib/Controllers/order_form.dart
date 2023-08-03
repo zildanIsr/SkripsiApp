@@ -63,6 +63,11 @@ class OrderFormController extends GetxController {
       return false;
     }
 
+    if (pacientTextField.text == '0') {
+      errorText.value = 'Pasien tidak boleh 0';
+      return false;
+    }
+
     if (await sharedService.containkey('selectedAddress')) {
       var selectedAddress =
           await sharedService.getIntValuesSF('selectedAddress');
@@ -82,7 +87,7 @@ class OrderFormController extends GetxController {
     return true;
   }
 
-  Future<void> onSubmit(
+  onSubmit(
       String str, String catName, int catId, int price, int productId) async {
     if (await validation()) {
       try {

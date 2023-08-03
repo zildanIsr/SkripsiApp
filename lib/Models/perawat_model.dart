@@ -14,7 +14,6 @@ class Nurse {
   String strNumber;
   List<String> education;
   String workTime;
-  String? rating;
   List<String> timeRange;
   List<String> dayActive;
   int? userId;
@@ -30,7 +29,6 @@ class Nurse {
     required this.strNumber,
     required this.education,
     required this.workTime,
-    this.rating,
     required this.timeRange,
     required this.dayActive,
     this.userId,
@@ -47,7 +45,6 @@ class Nurse {
         strNumber: json["strNumber"],
         education: List<String>.from(json["education"].map((x) => x)),
         workTime: json["workTime"],
-        rating: json["rating"],
         timeRange: List<String>.from(json["timeRange"].map((x) => x)),
         dayActive: List<String>.from(json["dayActive"].map((x) => x)),
         userId: json["userId"],
@@ -65,7 +62,6 @@ class Nurse {
         "strNumber": strNumber,
         "education": List<dynamic>.from(education.map((x) => x)),
         "workTime": workTime,
-        "rating": rating,
         "timeRange": List<dynamic>.from(timeRange.map((x) => x)),
         "dayActive": List<dynamic>.from(dayActive.map((x) => x)),
         "userId": userId,

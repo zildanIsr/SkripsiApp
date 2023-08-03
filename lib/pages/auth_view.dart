@@ -68,20 +68,33 @@ class AuthView extends StatelessWidget {
     return FlutterLogin(
       theme: LoginTheme(
           pageColorLight: Colors.redAccent.shade100,
-          pageColorDark: Colors.pink.shade500),
+          pageColorDark: Colors.pink.shade500,
+          titleStyle: const TextStyle(
+            fontSize: 34,
+          )),
       messages: LoginMessages(
+          confirmPasswordHint: "Konfirmasi password",
+          recoverPasswordButton: 'Kirim',
+          recoverPasswordSuccess: 'Berhasil mengirimkan email',
           forgotPasswordButton: 'Lupa Password?',
           signupButton: 'Register',
           confirmPasswordError: 'Password salah',
           recoverPasswordIntro: 'Setel ulang password anda',
           recoverPasswordDescription:
               'Kami akan mengirim anda email untuk mengganti password',
-          goBackButton: 'Kembali'),
+          goBackButton: 'Kembali',
+          additionalSignUpSubmitButton: 'Daftar'),
       title: 'Home Nursing',
       logo: const AssetImage('assets/Logo_vektor.png'),
       passwordValidator: (value) {
-        if (value!.length <= 8) {
+        if (value!.length < 8) {
           return 'Tidak boleh kurang dari 8';
+        }
+        return null;
+      },
+      userValidator: (value) {
+        if (value!.isEmpty) {
+          return 'Tidak boleh kosong';
         }
         return null;
       },

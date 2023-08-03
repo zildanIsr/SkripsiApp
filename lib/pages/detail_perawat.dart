@@ -119,7 +119,7 @@ class ProfileDetail extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Container(
-            height: bodyHeight * 0.45,
+            height: bodyHeight >= 700 ? bodyHeight * 0.45 : bodyHeight * 0.5,
             width: mediaQueryWidht,
             decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -136,12 +136,12 @@ class ProfileDetail extends StatelessWidget {
                 Positioned(
                   left: 50,
                   right: 50,
-                  top: 80,
+                  top: bodyHeight > 700 ? 80 : 70,
                   child: Column(
                     children: [
                       CircleAvatar(
                         backgroundColor: Colors.white,
-                        radius: 75,
+                        radius: 70,
                         child: CircleAvatar(
                           backgroundColor: Colors.transparent,
                           backgroundImage: image != null
@@ -149,7 +149,7 @@ class ProfileDetail extends StatelessWidget {
                               : const AssetImage(
                                   'assets/doctor.png',
                                 ) as ImageProvider,
-                          radius: 70,
+                          radius: 65,
                         ),
                       ),
                       const SizedBox(
@@ -161,7 +161,7 @@ class ProfileDetail extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.clip,
                         style: const TextStyle(
-                            fontSize: 22,
+                            fontSize: 20,
                             fontWeight: FontWeight.w500,
                             color: Colors.white),
                       )
@@ -182,7 +182,7 @@ class ProfileDetail extends StatelessWidget {
                         },
                         child: Container(
                           width: mediaQueryWidht,
-                          height: 90,
+                          height: bodyHeight >= 700 ? 90 : 80,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8.0, vertical: 16.0),
                           child: Row(
@@ -223,7 +223,9 @@ class ProfileDetail extends StatelessWidget {
                                     RatingNurse(
                                         sizeIcon: 22,
                                         alignSelected: MainAxisAlignment.center,
-                                        rate: rate.toString()),
+                                        rate: rate.toString(),
+                                        mb: 0,
+                                        mt: 0),
                                     const SizedBox(
                                       height: 2.0,
                                     ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Controllers/auth.dart';
-import 'package:flutter_application_1/Controllers/order_form.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import 'package:get/get.dart';
@@ -53,31 +52,28 @@ class DetailOrderView extends StatelessWidget {
     }
 
     AuthController ac = Get.find();
-    OrderFormController ofc = Get.find();
+    OrderConfirm oc = Get.find();
     NurseController nc = Get.put(NurseController());
-    nc.getNurseDatabySTR(ofc.order.value.strNumber);
+    nc.getNurseDatabySTR(oc.order.value.strNumber);
 
     FloatButtoncontroller bc = Get.put(FloatButtoncontroller());
-    OrderConfirm oc = Get.put(OrderConfirm());
 
-    createNewOrder(Order data) {
-      //debugPrint('Name: ${data.name}, Password: ${data.password}');
-      return Future.delayed(const Duration(seconds: 1)).then((_) async {
-        var responses = await oc.addNewOrder(data);
-        if (responses >= 400 && responses < 500) {
-          return Get.snackbar("Error", "Gagal menambahkan pesanan",
-              colorText: Colors.white,
-              snackPosition: SnackPosition.TOP,
-              backgroundColor: Colors.red.shade400);
-        } else if (responses >= 500) {
-          return Get.snackbar("Error", "Gagal menambahkan pesanan",
-              colorText: Colors.white,
-              snackPosition: SnackPosition.TOP,
-              backgroundColor: Colors.red.shade400);
-        } else if (responses >= 200 && responses < 300) {
-          Get.offAll(() => const OrderSuccessView());
-        }
-      });
+    createNewOrder(Order data) async {
+      var responses = await oc.addNewOrder(data);
+
+      if (responses >= 400 && responses < 500) {
+        return Get.snackbar("Error", "Gagal membuat pesanan",
+            colorText: Colors.white,
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.red.shade400);
+      } else if (responses >= 500) {
+        return Get.snackbar("Error", "Gagal membuat pesanan",
+            colorText: Colors.white,
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.red.shade400);
+      } else if (responses >= 200 && responses < 300) {
+        Get.offAll(() => const OrderSuccessView());
+      }
     }
 
     return Scaffold(
@@ -85,7 +81,7 @@ class DetailOrderView extends StatelessWidget {
       body: WillPopScope(
           onWillPop: showExitPopup,
           child: Obx(
-            () => oc.isLoading.value
+            () => nc.isLoading.value
                 ? Center(
                     child: LoadingAnimationWidget.waveDots(
                       color: Colors.pinkAccent,
@@ -115,11 +111,11 @@ class DetailOrderView extends StatelessWidget {
                       ),
                       //Pasien
                       UserInformation(
-                        title1: 'Telepon',
-                        title2: '',
+                        title1: '',
+                        title2: 'Telepon',
                         userName: ac.user.name,
-                        desc_1: ac.user.phoneNumber,
-                        desc_2: '',
+                        desc_1: '',
+                        desc_2: ac.user.phoneNumber,
                         bodyHeight: bodyHeight,
                         id: ac.user.id,
                         nurse: false,
@@ -152,13 +148,13 @@ class DetailOrderView extends StatelessWidget {
           child: ElevatedButton(
               onPressed: () {
                 createNewOrder(Order(
-                    orderId: ofc.order.value.orderID,
-                    productId: ofc.order.value.productId,
+                    orderId: oc.order.value.orderID,
+                    productId: oc.order.value.productId,
                     perawatId: nc.singleNurse.id!,
-                    uAddressId: ofc.addressId.value,
-                    totprice: ofc.order.value.totprice + 3000,
-                    pacientAmount: ofc.order.value.amountPasient,
-                    jadwalPesanan: ofc.order.value.dateTimePesanan,
+                    uAddressId: oc.addressId.value,
+                    totprice: oc.order.value.totprice + 3000,
+                    pacientAmount: oc.order.value.amountPasient,
+                    jadwalPesanan: oc.order.value.dateTimePesanan,
                     updatedAt: DateTime.now(),
                     createdAt: DateTime.now()));
               },
@@ -182,7 +178,7 @@ class PriceDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    OrderFormController oc = Get.find<OrderFormController>();
+    OrderConfirm oc = Get.find<OrderConfirm>();
 
     return Container(
       padding: const EdgeInsets.all(16.0),
@@ -316,7 +312,7 @@ class OrderInformation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    OrderFormController oc = Get.find<OrderFormController>();
+    OrderConfirm oc = Get.find<OrderConfirm>();
     initializeDateFormatting();
 
     return Container(
@@ -327,7 +323,7 @@ class OrderInformation extends StatelessWidget {
         children: <Widget>[
           //Tittle
           Text(
-            'Order ID ${oc.order.value.orderID.substring(0, 12)}',
+            'No Pesanan ${oc.order.value.orderID.substring(0, 12)}',
             style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500),
           ),
           const SizedBox(

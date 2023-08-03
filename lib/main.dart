@@ -7,10 +7,11 @@ import 'package:flutter_application_1/pages/auth_view.dart';
 import 'package:flutter_application_1/widgets/bottom_navbar.dart';
 import 'package:get/get.dart';
 
-//import 'pages/splash_screen.dart';
 import 'package:page_transition/page_transition.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

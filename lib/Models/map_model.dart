@@ -12,20 +12,24 @@ String mapModelToJson(List<MapModel> data) =>
 
 class MapModel {
   int id;
+  String name;
   Addresses addresses;
 
   MapModel({
     required this.id,
+    required this.name,
     required this.addresses,
   });
 
   factory MapModel.fromJson(Map<String, dynamic> json) => MapModel(
         id: json["id"],
+        name: json["name"],
         addresses: Addresses.fromJson(json["Addresses"]),
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
+        "name": name,
         "Addresses": addresses.toJson(),
       };
 }

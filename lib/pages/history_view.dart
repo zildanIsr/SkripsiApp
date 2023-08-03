@@ -77,7 +77,7 @@ class _HistoryViewState extends State<HistoryView>
                               hc.refreshData();
                             },
                             child: const Center(
-                                child: Text('Belum ada history',
+                                child: Text('Belum ada pesanan',
                                     style: TextStyle(fontSize: 18))),
                           )
                         : RefreshIndicator(
@@ -103,7 +103,9 @@ class _HistoryViewState extends State<HistoryView>
                                         hc.listHistory[index].isFinished,
                                     id: hc.listHistory[index].id,
                                     isRated: hc.listHistory[index].isRated,
-                                    perawatId: hc.listHistory[index].perawatId,
+                                    perawatId: hc.listHistory[index].nurseId,
+                                    datetime:
+                                        '${hc.listHistory[index].jadwalPesanan.day}/${hc.listHistory[index].jadwalPesanan.month}/${hc.listHistory[index].jadwalPesanan.year}',
                                   );
                                 })),
                           ),
@@ -115,7 +117,7 @@ class _HistoryViewState extends State<HistoryView>
                               await hc.refreshData();
                             },
                             child: const Center(
-                                child: Text('Belum ada history',
+                                child: Text('Belum ada riwayat',
                                     style: TextStyle(fontSize: 18))),
                           )
                         : RefreshIndicator(
@@ -142,7 +144,9 @@ class _HistoryViewState extends State<HistoryView>
                                         hc.listFinished[index].isFinished,
                                     id: hc.listFinished[index].id,
                                     isRated: hc.listFinished[index].isRated,
-                                    perawatId: hc.listFinished[index].perawatId,
+                                    perawatId: hc.listFinished[index].nurseId,
+                                    datetime:
+                                        '${hc.listFinished[index].jadwalPesanan.day}/${hc.listFinished[index].jadwalPesanan.month}/${hc.listFinished[index].jadwalPesanan.year}',
                                   );
                                 })),
                           )

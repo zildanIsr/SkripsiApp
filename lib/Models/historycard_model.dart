@@ -15,7 +15,7 @@ class HistoryCardModel {
   int id;
   String orderId;
   int productId;
-  int perawatId;
+  int nurseId;
   int userId;
   int uAddressId;
   int totprice;
@@ -32,7 +32,7 @@ class HistoryCardModel {
     required this.id,
     required this.orderId,
     required this.productId,
-    required this.perawatId,
+    required this.nurseId,
     required this.userId,
     required this.uAddressId,
     required this.totprice,
@@ -51,7 +51,7 @@ class HistoryCardModel {
         id: json["id"],
         orderId: json["orderId"],
         productId: json["productId"],
-        perawatId: json["perawatId"],
+        nurseId: json["nurseId"],
         userId: json["userId"],
         uAddressId: json["uAddressId"],
         totprice: json["totprice"],
@@ -69,7 +69,7 @@ class HistoryCardModel {
         "id": id,
         "orderId": orderId,
         "productId": productId,
-        "perawatId": perawatId,
+        "nurseId": nurseId,
         "userId": userId,
         "uAddressId": uAddressId,
         "totprice": totprice,

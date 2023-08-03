@@ -1,6 +1,6 @@
 // To parse this JSON data, do
 //
-//     final AddressModel = AddressModelFromJson(jsonString);
+//     final addressModel = addressModelFromJson(jsonString);
 
 import 'dart:convert';
 
@@ -21,9 +21,10 @@ class AddressModel {
   String country;
   double latitude;
   double longitude;
+  bool status;
   int userId;
-  DateTime updatedAt;
   DateTime createdAt;
+  DateTime updatedAt;
 
   AddressModel({
     this.id,
@@ -36,9 +37,10 @@ class AddressModel {
     required this.country,
     required this.latitude,
     required this.longitude,
+    required this.status,
     required this.userId,
-    required this.updatedAt,
     required this.createdAt,
+    required this.updatedAt,
   });
 
   factory AddressModel.fromJson(Map<String, dynamic> json) => AddressModel(
@@ -52,12 +54,14 @@ class AddressModel {
         country: json["country"],
         latitude: json["latitude"]?.toDouble(),
         longitude: json["longitude"]?.toDouble(),
+        status: json["status"],
         userId: json["userId"],
-        updatedAt: DateTime.parse(json["updatedAt"]),
         createdAt: DateTime.parse(json["createdAt"]),
+        updatedAt: DateTime.parse(json["updatedAt"]),
       );
 
   Map<String, dynamic> toJson() => {
+        "id": id,
         "street": street,
         "sublocality": sublocality,
         "locality": locality,
@@ -67,8 +71,9 @@ class AddressModel {
         "country": country,
         "latitude": latitude,
         "longitude": longitude,
+        "status": status,
         "userId": userId,
-        "updatedAt": updatedAt.toIso8601String(),
         "createdAt": createdAt.toIso8601String(),
+        "updatedAt": updatedAt.toIso8601String(),
       };
 }

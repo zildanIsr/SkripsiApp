@@ -6,7 +6,11 @@ import 'package:get/get.dart';
 import '../Models/search_model.dart';
 import 'package:http/http.dart' as http;
 
+import '../services/api_service.dart';
+
 class SearchNurse extends GetxController {
+  final APIService _apiservice = APIService();
+
   var isLoading = true.obs;
   final nameController = TextEditingController();
   Timer? debounce;
@@ -25,8 +29,9 @@ class SearchNurse extends GetxController {
     searchnurse.clear();
     isLoading(true);
     try {
-      Uri url =
-          Uri.parse('http://192.168.100.4:3500/v1/api/nurse/search/$name');
+      var geturl = _apiservice.getURL("v1/api/nurse/search/$name");
+
+      Uri url = Uri.parse(geturl);
 
       final response = await http.get(url);
       final nurseData = json.decode(response.body)['data'];

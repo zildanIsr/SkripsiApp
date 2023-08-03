@@ -53,11 +53,11 @@ class Homepage extends StatelessWidget {
                     softWrap: true,
                     maxLines: 1,
                     style: const TextStyle(
-                        fontSize: 22, fontWeight: FontWeight.bold),
+                        fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(
-                  height: 24.0,
+                  height: 18.0,
                 ),
                 InkWell(
                   onTap: () {
@@ -113,24 +113,32 @@ class Homepage extends StatelessWidget {
                     child: Text(
                       'Sehat Dari Rumah',
                       style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
+                  ),
+                  const SizedBox(
+                    height: 8,
                   ),
                   CategoryList()
                 ],
               ),
             ),
           ),
-          Container(
+          SizedBox(
             height: bodyHeight * 0.45,
-            //color: Colors.amberAccent,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text(
-                  'Layanan Terbaru',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                const Padding(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
+                  child: Text(
+                    'Perawat Terfavorit',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(
+                  height: 12.0,
                 ),
                 Obx(() => pc.isLoading.value
                     ? const CardSkeleton(
@@ -141,7 +149,11 @@ class Homepage extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.max,
                               children: [
+                                SizedBox(
+                                  height: 100.0,
+                                ),
                                 Icon(
                                   Icons.medical_services_outlined,
                                   color: Colors.black12,
@@ -153,14 +165,15 @@ class Homepage extends StatelessWidget {
                                 Text(
                                   "Belum ada layanan",
                                   style: TextStyle(
-                                      fontSize: 20.0,
+                                      fontSize: 18.0,
                                       fontWeight: FontWeight.w500),
                                 ),
                               ],
                             ),
                           )
                         : ListView.builder(
-                            padding: EdgeInsets.zero,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 0.0, horizontal: 16.0),
                             itemCount: pc.populerProduct.length,
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -168,26 +181,19 @@ class Homepage extends StatelessWidget {
                               return PerawatListItem(
                                 key: ValueKey(pc.populerProduct[index].id),
                                 thumbnail: ClipRRect(
-                                  borderRadius: BorderRadius.circular(15),
-                                  child: pc.populerProduct[index].user.image !=
-                                          null
-                                      ? Image.network(
-                                          pc.populerProduct[index].user.image,
-                                          fit: BoxFit.fill,
-                                        )
-                                      : Image.asset(
-                                          'assets/nurse-boy-128.png',
-                                          fit: BoxFit.cover,
-                                        ),
-                                ),
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.network(
+                                      pc.populerProduct[index].user.image,
+                                      fit: BoxFit.fill,
+                                    )),
                                 name: pc.populerProduct[index].user.name,
                                 category:
                                     pc.populerProduct[index].category.name,
                                 price: pc.populerProduct[index].price,
-                                rating:
-                                    pc.populerProduct[index].perawat.rating!,
+                                rating: pc.populerProduct[index].nurse.rating
+                                    .toDouble(),
                                 strNumber:
-                                    pc.populerProduct[index].perawat.strNumber,
+                                    pc.populerProduct[index].nurse.strNumber,
                                 categoryId: pc.populerProduct[index].categoryId,
                                 productId: pc.populerProduct[index].id,
                               );
@@ -235,10 +241,7 @@ class SelectCard extends StatelessWidget {
     ProductController pc = Get.put(ProductController());
 
     return Container(
-      constraints: const BoxConstraints(maxHeight: 100, maxWidth: 100),
-      width: 100,
-      height: 100,
-      margin: const EdgeInsets.only(right: 4),
+      constraints: const BoxConstraints(maxHeight: 90, maxWidth: 90),
       child: Column(
         children: <Widget>[
           Expanded(
@@ -258,7 +261,7 @@ class SelectCard extends StatelessWidget {
                         height: double.infinity,
                         child: Icon(
                           category.icon,
-                          size: 40,
+                          size: 30,
                         )))),
           ),
           const SizedBox(
@@ -266,7 +269,7 @@ class SelectCard extends StatelessWidget {
           ),
           Text(
             category.name,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
           )
         ],
       ),

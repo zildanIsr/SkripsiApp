@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_1/Controllers/nurse_data.dart';
-import 'package:flutter_application_1/Controllers/order_form.dart';
+//import 'package:flutter_application_1/Controllers/order_form.dart';
 import 'package:flutter_application_1/pages/detail_perawat.dart';
 import 'package:flutter_application_1/widgets/workrate.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+
+import '../Controllers/orderconfirm_controller.dart';
 
 class _ArticleDescription extends StatelessWidget {
   const _ArticleDescription({
@@ -16,6 +18,7 @@ class _ArticleDescription extends StatelessWidget {
     required this.strNumber,
     required this.categoryId,
     required this.productId,
+    required this.bodyheight,
   });
 
   final String name;
@@ -25,11 +28,10 @@ class _ArticleDescription extends StatelessWidget {
   final int price;
   final int productId;
   final String strNumber;
+  final double bodyheight;
 
   @override
   Widget build(BuildContext context) {
-    //final idr = NumberFormat("#.##0,00", "id_ID");
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -42,7 +44,7 @@ class _ArticleDescription extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontSize: 20.0,
+                fontSize: 18.0,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -58,14 +60,13 @@ class _ArticleDescription extends StatelessWidget {
             ),
           ],
         ),
-        Expanded(
-            child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: RatingNurse(
-                  alignSelected: MainAxisAlignment.start,
-                  sizeIcon: 22.0,
-                  rate: (rating).toStringAsFixed(1),
-                ))),
+        RatingNurse(
+          alignSelected: MainAxisAlignment.start,
+          sizeIcon: 22.0,
+          rate: (rating).toStringAsFixed(1),
+          mb: bodyheight >= 700 ? 16 : 8,
+          mt: bodyheight >= 700 ? 4 : 2,
+        ),
         SizedBox(
           width: double.infinity,
           child: Row(
@@ -77,18 +78,19 @@ class _ArticleDescription extends StatelessWidget {
                         locale: "id-ID", decimalDigits: 0, name: 'Rp ')
                     .format(price),
                 style: const TextStyle(
-                    fontSize: 20.0, fontWeight: FontWeight.w500),
+                    fontSize: 18.0, fontWeight: FontWeight.w500),
               ),
               ElevatedButton(
                   onPressed: () {
-                    final oc = Get.put(OrderFormController());
+                    OrderConfirm oc = Get.put(OrderConfirm());
+
                     Get.bottomSheet(
                         shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.vertical(
                                 top: Radius.circular(15.0))),
                         backgroundColor: Colors.white,
                         Container(
-                          height: 250,
+                          height: MediaQuery.of(context).size.height * 0.32,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16.0, vertical: 28.0),
                           child: Column(
@@ -246,6 +248,12 @@ class _ArticleDescription extends StatelessWidget {
                                           TextFormField(
                                             controller: oc.pacientTextField,
                                             autofocus: true,
+                                            validator: (value) {
+                                              if (value == '0') {
+                                                return 'Tidak boleh 0';
+                                              }
+                                              return null;
+                                            },
                                             inputFormatters: [
                                               LengthLimitingTextInputFormatter(
                                                   2),
@@ -267,40 +275,24 @@ class _ArticleDescription extends StatelessWidget {
                                 ],
                               ),
                               const SizedBox(
-                                height: 24.0,
+                                height: 16.0,
                               ),
                               Container(
                                 width: double.infinity,
                                 alignment: Alignment.centerRight,
                                 child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8.0)),
                                       maximumSize:
                                           const Size(110, double.infinity),
                                     ),
                                     onPressed: () {
-                                      oc.onSubmit(strNumber, category,
+                                      Navigator.of(context).pop();
+                                      oc.onOrder(strNumber, category,
                                           categoryId, price, productId);
                                     },
-                                    child: const Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 8.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Lanjut',
-                                            style: TextStyle(fontSize: 16.0),
-                                          ),
-                                          Icon(
-                                            Icons.navigate_next,
-                                            size: 24.0,
-                                          )
-                                        ],
-                                      ),
+                                    child: const Text(
+                                      'Lanjut',
+                                      style: TextStyle(fontSize: 14.0),
                                     )),
                               )
                             ],
@@ -341,9 +333,12 @@ class PerawatListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Card(
+    final mediaQueryHeight = MediaQuery.of(context).size.height;
+
+    final bodyHeight = mediaQueryHeight - MediaQuery.of(context).padding.top;
+    return LayoutBuilder(
+        builder: (BuildContext ctx, BoxConstraints constraints) {
+      return Card(
         color: Colors.white12,
         elevation: 0.0,
         clipBehavior: Clip.hardEdge,
@@ -356,18 +351,26 @@ class PerawatListItem extends StatelessWidget {
               Get.put(NurseController());
             }));
           }),
-          child: SizedBox(
-            height: 140,
+          child: Container(
+            constraints: BoxConstraints(
+              maxHeight: bodyHeight >= 700 ? 145 : 120,
+              maxWidth: MediaQuery.of(context).size.width,
+            ),
+            //color: Colors.amber,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                AspectRatio(
-                  aspectRatio: 1.0,
-                  child: thumbnail,
+                SizedBox(
+                  //color: Colors.amber,
+                  height: bodyHeight >= 700 ? 130 : 100,
+                  width: bodyHeight >= 700 ? 130 : 100,
+                  child: Container(child: thumbnail),
                 ),
                 Expanded(
+                  flex: 2,
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20.0, 0.0, 2.0, 0.0),
+                    padding: const EdgeInsets.fromLTRB(16.0, 0.0, 2.0, 0.0),
                     child: _ArticleDescription(
                       name: name,
                       category: category,
@@ -376,6 +379,7 @@ class PerawatListItem extends StatelessWidget {
                       strNumber: strNumber,
                       categoryId: categoryId,
                       productId: productId,
+                      bodyheight: bodyHeight,
                     ),
                   ),
                 ),
@@ -383,7 +387,7 @@ class PerawatListItem extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

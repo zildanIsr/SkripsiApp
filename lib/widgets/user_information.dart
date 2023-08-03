@@ -48,8 +48,8 @@ class UserInformation extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
-      height: bodyHeight * 0.32,
+      padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0),
+      height: bodyHeight >= 700 ? bodyHeight * 0.3 : bodyHeight * 0.35,
       //color: Colors.amber,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,42 +58,36 @@ class UserInformation extends StatelessWidget {
             nurse ? 'Detail Perawat' : 'Detail Pasien',
             style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600),
           ),
+          const SizedBox(
+            height: 8.0,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                  flex: 1,
+              SizedBox(
+                  height: bodyHeight >= 700 ? 130 : 120,
+                  width: bodyHeight >= 700 ? 130 : 120,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15), // Image border
-                    // child: Image.network(
-                    //   'https://dummyimage.com/150x150/000/fff.png',
-                    //   fit: BoxFit.cover,
-                    //   width: 150.0,
-                    //   height: 150.0,
-                    // ),
+                    borderRadius: BorderRadius.circular(8), // Image border
                     child: image != null
                         ? Image.network(
                             image!,
                             fit: BoxFit.fill,
-                            width: 150.0,
-                            height: 150.0,
                           )
                         : Image.asset(
                             'assets/nurse-boy-128.png',
                             fit: BoxFit.fill,
-                            width: 150.0,
-                            height: 150.0,
                           ),
                   )),
               Expanded(
                   flex: 2,
                   child: Container(
+                    alignment: Alignment.bottomLeft,
                     //color: Colors.deepOrange,
-                    padding: const EdgeInsets.only(
-                        left: 16.0, top: 16.0, right: 16.0),
+                    padding: const EdgeInsets.only(left: 16.0),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         //Name
@@ -103,7 +97,7 @@ class UserInformation extends StatelessWidget {
                           overflow: TextOverflow.clip,
                           maxLines: 1,
                           style: const TextStyle(
-                              fontSize: 20.0, fontWeight: FontWeight.bold),
+                              fontSize: 18.0, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(
                           height: 8.0,

@@ -34,7 +34,18 @@ class ListAddress extends StatelessWidget {
               ? Container()
               : FloatingActionButton(
                   onPressed: () {
-                    Get.toNamed('/maps-maker');
+                    if (ac.addressbyUser.length >= 5) {
+                      Get.snackbar("Gagal", "",
+                          messageText: const Text(
+                            "Tidak bisa menambah alamat lagi",
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                          colorText: Colors.white,
+                          snackPosition: SnackPosition.TOP,
+                          backgroundColor: Colors.red.shade300);
+                    } else {
+                      Get.toNamed('/maps-maker');
+                    }
                   },
                   child: const Icon(Icons.add_home_sharp),
                 ),
@@ -151,11 +162,16 @@ class Item extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                ElevatedButton(
+                OutlinedButton.icon(
+                    icon: const Icon(Icons.delete),
                     onPressed: () {
                       showExitPopup();
                     },
-                    child: const Text('Hapus alamat')),
+                    style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Colors.pinkAccent),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 6.0, horizontal: 8)),
+                    label: const Text('Hapus')),
               ],
             ),
           ),

@@ -75,11 +75,11 @@ class SearchView extends StatelessWidget {
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
                     return ItemList(
-                      key: ValueKey(shc.searchnurse[index].perawat.id),
+                      key: ValueKey(shc.searchnurse[index].nurse.id),
                       name: shc.searchnurse[index].name,
                       image: shc.searchnurse[index].image,
-                      str: shc.searchnurse[index].perawat.strNumber,
-                      id: shc.searchnurse[index].perawat.id,
+                      str: shc.searchnurse[index].nurse.strNumber,
+                      id: shc.searchnurse[index].nurse.id,
                     );
                   })),
     );

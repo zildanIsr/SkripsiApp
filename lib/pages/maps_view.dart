@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../Controllers/map_contoller.dart';
 import '../widgets/perawat_card.dart';
 import '../widgets/skeleton.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class MapsView extends StatefulWidget {
   const MapsView({Key? key}) : super(key: key);
@@ -17,6 +18,8 @@ class MapsView extends StatefulWidget {
 
 class MapsViewState extends State<MapsView> {
   MapController mc = Get.put(MapController());
+  bool isRefreshButtonVisible = true;
+  bool refresh = false;
 
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
@@ -28,6 +31,11 @@ class MapsViewState extends State<MapsView> {
     zoom: 14.4746,
   );
 
+  Future<void> _disposeController() async {
+    final controller = await _controller.future;
+    controller.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -37,6 +45,7 @@ class MapsViewState extends State<MapsView> {
   @override
   void dispose() {
     _markers.clear();
+    _disposeController();
     super.dispose();
   }
 
@@ -52,7 +61,7 @@ class MapsViewState extends State<MapsView> {
 
     for (int i = 0; i < mc.position.length; i++) {
       Marker marker = Marker(
-          markerId: MarkerId(i.toString()),
+          markerId: MarkerId(mc.position[i].name),
           position: LatLng(mc.position[i].addresses.latitude,
               mc.position[i].addresses.longitude),
           icon: myIcon,
@@ -65,6 +74,7 @@ class MapsViewState extends State<MapsView> {
                   color: Colors.white,
                   child: Scaffold(
                       appBar: AppBar(
+                        title: Text(mc.position[i].name),
                         elevation: 2.0,
                         leading: IconButton(
                             onPressed: () {
@@ -111,28 +121,19 @@ class MapsViewState extends State<MapsView> {
                                     return PerawatListItem(
                                       key: ValueKey(mc.productPoint[index].id),
                                       thumbnail: ClipRRect(
-                                        borderRadius: BorderRadius.circular(15),
-                                        child:
-                                            mc.productPoint[index].user.image !=
-                                                    null
-                                                ? Image.network(
-                                                    mc.productPoint[index].user
-                                                        .image,
-                                                    fit: BoxFit.fill,
-                                                  )
-                                                : Image.asset(
-                                                    'assets/nurse-boy-128.png',
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                      ),
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                          child: Image.network(
+                                            mc.productPoint[index].user.image,
+                                            fit: BoxFit.fill,
+                                          )),
                                       name: mc.productPoint[index].user.name,
                                       category:
                                           mc.productPoint[index].category.name,
                                       price: mc.productPoint[index].price,
-                                      rating: mc
-                                          .productPoint[index].perawat.rating!,
-                                      strNumber: mc.productPoint[index].perawat
-                                          .strNumber,
+                                      rating: 0.0,
+                                      strNumber: mc
+                                          .productPoint[index].nurse.strNumber,
                                       categoryId:
                                           mc.productPoint[index].categoryId,
                                       productId: mc.productPoint[index].id,
@@ -143,6 +144,7 @@ class MapsViewState extends State<MapsView> {
           });
       setState(() {
         _markers.add(marker);
+        refresh = false;
       });
     }
   }
@@ -150,14 +152,57 @@ class MapsViewState extends State<MapsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: GoogleMap(
-      myLocationEnabled: true,
-      mapType: MapType.normal,
-      initialCameraPosition: _kGooglePlex,
-      onMapCreated: (GoogleMapController controller) {
-        _controller.complete(controller);
-      },
-      markers: _markers,
-    ));
+        body: Stack(children: [
+      GoogleMap(
+        myLocationEnabled: true,
+        mapType: MapType.normal,
+        initialCameraPosition: _kGooglePlex,
+        onMapCreated: (GoogleMapController controller) {
+          _controller.complete(controller);
+        },
+        markers: _markers,
+        onCameraMoveStarted: () {
+          setState(() {
+            isRefreshButtonVisible = false;
+          });
+        },
+        onCameraIdle: () {
+          setState(() {
+            isRefreshButtonVisible = true;
+          });
+        },
+      ),
+      Visibility(
+        visible: isRefreshButtonVisible,
+        child: Positioned(
+          bottom: 15,
+          right: 0,
+          left: 0,
+          child: refresh
+              ? Center(
+                  child: LoadingAnimationWidget.waveDots(
+                    color: Colors.pink,
+                    size: 50,
+                  ),
+                )
+              : AnimatedContainer(
+                  duration: const Duration(seconds: 2),
+                  child: CircleAvatar(
+                    maxRadius: 25,
+                    backgroundColor: Colors.white60,
+                    child: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            refresh = true;
+                          });
+                          _generateMarkers();
+                        },
+                        splashColor: Colors.pinkAccent,
+                        iconSize: 30,
+                        icon: const Icon(Icons.refresh)),
+                  )),
+        ),
+      ),
+    ]));
   }
 }

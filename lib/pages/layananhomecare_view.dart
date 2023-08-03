@@ -51,7 +51,7 @@ class LayananHomecareView extends StatelessWidget {
                     content: Container(
                       width: MediaQuery.of(context).size.width,
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0, vertical: 8.0),
+                          horizontal: 6.0, vertical: 8.0),
                       //color: Colors.amber,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -59,7 +59,7 @@ class LayananHomecareView extends StatelessWidget {
                         children: <Widget>[
                           Padding(
                             padding:
-                                const EdgeInsets.symmetric(horizontal: 32.0),
+                                const EdgeInsets.symmetric(horizontal: 12.0),
                             child: Column(
                               children: [
                                 const Row(
@@ -69,7 +69,7 @@ class LayananHomecareView extends StatelessWidget {
                                     Text(
                                       'Pilih Kategori',
                                       style: TextStyle(
-                                        fontSize: 18,
+                                        fontSize: 16,
                                       ),
                                     ),
                                     SizedBox(
@@ -88,7 +88,7 @@ class LayananHomecareView extends StatelessWidget {
                                     const Text(
                                       'Harga Layanan',
                                       style: TextStyle(
-                                        fontSize: 18,
+                                        fontSize: 16,
                                       ),
                                     ),
                                     const SizedBox(

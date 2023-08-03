@@ -5,12 +5,14 @@ import 'package:http/http.dart' as http;
 
 import '../Models/map_model.dart';
 import '../Models/product_model.dart';
+import '../services/api_service.dart';
 //import '../services/secure_storage.dart';
 //import '../services/simple_storage.dart';
 
 class MapController extends GetxController {
   //final StorageService _storageService = StorageService();
   //final SharedStorage sharedService = SharedStorage();
+  final APIService _apiservice = APIService();
 
   var isLoading = true.obs;
   var isError = false.obs;
@@ -29,8 +31,9 @@ class MapController extends GetxController {
   Future<List<MapModel>> getAllNurseAddress() async {
     isLoading(true);
     try {
-      Uri url =
-          Uri.parse('http://192.168.100.4:3500/v1/api/nurse/nurseAddress');
+      var geturl = _apiservice.getURL("v1/api/nurse/nurseAddress");
+
+      Uri url = Uri.parse(geturl);
 
       final response = await http.get(
         url,
@@ -63,8 +66,9 @@ class MapController extends GetxController {
   Future<List<Product>> getProduct(int id) async {
     isLoading(true);
     try {
-      Uri url =
-          Uri.parse('http://192.168.100.4:3500/v1/api/product/$id/productbyId');
+      var geturl = _apiservice.getURL("v1/api/product/$id/productbyId");
+
+      Uri url = Uri.parse(geturl);
 
       final response = await http.get(
         url,

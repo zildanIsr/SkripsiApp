@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../Models/myproduct_model.dart';
 import '../Models/product_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -17,7 +18,7 @@ class ProductController extends GetxController {
   var errmsg = "".obs;
 
   var listProduct = <Product>[].obs;
-  var myProduct = <Product>[].obs;
+  var myProduct = <MyProduct>[].obs;
   var populerProduct = <Product>[].obs;
   var productNurse = <Product>[].obs;
 
@@ -26,9 +27,9 @@ class ProductController extends GetxController {
 
   @override
   void onInit() {
+    super.onInit();
     getmyProducts();
     getPopulerProduct();
-    super.onInit();
   }
 
   @override
@@ -45,8 +46,11 @@ class ProductController extends GetxController {
     try {
       var token = await _storageService.readSecureData('token');
 
-      Uri url = Uri.parse(
-          'http://192.168.100.4:3500/v1/api/product/$id/productbyCategory');
+      var geturl = _apiservice.getURL("v1/api/product/$id/productbyCategory");
+
+      Uri url = Uri.parse(geturl);
+
+      //Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/product/$id/productbyCategory');
 
       final response = await http.get(
         url,
@@ -88,8 +92,11 @@ class ProductController extends GetxController {
     try {
       var token = await _storageService.readSecureData('token');
 
-      Uri url =
-          Uri.parse('http://192.168.100.4:3500/v1/api/product/populerProduct');
+      var geturl = _apiservice.getURL("v1/api/product/populerProduct");
+
+      Uri url = Uri.parse(geturl);
+
+      //Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/product/populerProduct');
 
       final response = await http.get(
         url,
@@ -126,7 +133,7 @@ class ProductController extends GetxController {
     }
   }
 
-  Future<List<Product>> getmyProducts() async {
+  Future<List<MyProduct>> getmyProducts() async {
     isLoading(true);
     try {
       var token = await _storageService.readSecureData('token');
@@ -152,7 +159,8 @@ class ProductController extends GetxController {
       await Future.delayed(
           const Duration(seconds: 3),
           () => {
-                myProduct.value = data.map((e) => Product.fromJson(e)).toList()
+                myProduct.value =
+                    data.map((e) => MyProduct.fromJson(e)).toList()
               });
 
       isLoading(false);
@@ -170,8 +178,11 @@ class ProductController extends GetxController {
   Future<List<Product>> productbyNurseId(int id) async {
     isLoading(true);
     try {
-      Uri url =
-          Uri.parse('http://192.168.100.4:3500/v1/api/product/$id/productbyId');
+      var geturl = _apiservice.getURL("v1/api/product/$id/productbyId");
+
+      Uri url = Uri.parse(geturl);
+
+      //Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/product/$id/productbyId');
 
       final response = await http.get(
         url,
@@ -184,7 +195,6 @@ class ProductController extends GetxController {
         isLoading(false);
         isError(true);
       }
-      //print(resListFormat);
       final List data = resListFormat;
 
       await Future.delayed(
@@ -311,36 +321,19 @@ class ProductController extends GetxController {
 
         //Uri url = Uri.parse('http://192.168.100.4:3500/v1/api/product/$id/delete');
 
-        final response = await http.delete(url, headers: {
+        final response = await http.put(url, headers: {
           "Accept": "application/json",
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
         });
 
-        if (response.statusCode >= 400 && response.statusCode < 500) {
+        if (response.statusCode >= 400) {
           Get.snackbar(
             'Error',
             '',
             colorText: Colors.white,
             messageText: const Text(
               'Gagal menghapus layanan',
-              style: TextStyle(fontSize: 18.0, color: Colors.white),
-            ),
-            backgroundColor: Colors.red.shade400,
-            snackPosition: SnackPosition.TOP,
-          );
-          isLoading(false);
-          isError(true);
-          return;
-        }
-
-        if (response.statusCode >= 500) {
-          Get.snackbar(
-            'Error',
-            '',
-            colorText: Colors.white,
-            messageText: const Text(
-              'Kesalahan server',
               style: TextStyle(fontSize: 18.0, color: Colors.white),
             ),
             backgroundColor: Colors.red.shade400,
@@ -372,7 +365,7 @@ class ProductController extends GetxController {
         }
       } else {
         Get.snackbar(
-          'Error',
+          'Gagal',
           '',
           messageText: const Text(
             'Layanan tidak ditemukan',
@@ -415,7 +408,7 @@ class ProductController extends GetxController {
 
         if (response.statusCode >= 400 && response.statusCode < 500) {
           Get.snackbar(
-            'Error',
+            'Gagal',
             '',
             colorText: Colors.white,
             messageText: const Text(
@@ -430,7 +423,7 @@ class ProductController extends GetxController {
 
         if (response.statusCode >= 500) {
           Get.snackbar(
-            'Error',
+            'Gagal',
             '',
             colorText: Colors.white,
             messageText: const Text(
@@ -465,7 +458,7 @@ class ProductController extends GetxController {
       }
     } else {
       Get.snackbar(
-        'Error',
+        'Gagal',
         '',
         messageText: const Text(
           "Kategori atau harga tidak boleh kosong",

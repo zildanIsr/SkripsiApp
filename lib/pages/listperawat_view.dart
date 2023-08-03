@@ -36,7 +36,7 @@ class ListPerawatView extends StatelessWidget {
         appBar: myAppBar,
         body: Obx(() => pc.isLoading.value
             ? const CardSkeleton(
-                count: 4,
+                count: 3,
               )
             : pc.listProduct.isEmpty
                 ? const Center(
@@ -54,7 +54,7 @@ class ListPerawatView extends StatelessWidget {
                         Text(
                           "Belum ada layanan",
                           style: TextStyle(
-                              fontSize: 20.0, fontWeight: FontWeight.w500),
+                              fontSize: 18.0, fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
@@ -67,22 +67,16 @@ class ListPerawatView extends StatelessWidget {
                       return PerawatListItem(
                         key: ValueKey(pc.listProduct[index].id),
                         thumbnail: ClipRRect(
-                          borderRadius: BorderRadius.circular(15),
-                          child: pc.listProduct[index].user.image != null
-                              ? Image.network(
-                                  pc.listProduct[index].user.image,
-                                  fit: BoxFit.fill,
-                                )
-                              : Image.asset(
-                                  'assets/nurse-boy-128.png',
-                                  fit: BoxFit.cover,
-                                ),
-                        ),
+                            borderRadius: BorderRadius.circular(15),
+                            child: Image.network(
+                              pc.listProduct[index].user.image,
+                              fit: BoxFit.fill,
+                            )),
                         name: pc.listProduct[index].user.name,
                         category: pc.listProduct[index].category.name,
                         price: pc.listProduct[index].price,
-                        rating: pc.listProduct[index].perawat.rating!,
-                        strNumber: pc.listProduct[index].perawat.strNumber,
+                        rating: pc.listProduct[index].nurse.rating.toDouble(),
+                        strNumber: pc.listProduct[index].nurse.strNumber,
                         categoryId: pc.listProduct[index].categoryId,
                         productId: pc.listProduct[index].id,
                       );

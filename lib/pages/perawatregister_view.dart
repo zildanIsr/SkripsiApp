@@ -110,7 +110,30 @@ class FormRegister extends StatelessWidget {
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   //labelText: 'Masukan Nama',
-                  hintText: 'Masukin nomor STR',
+                  hintText: 'nomor STR',
+                  border: OutlineInputBorder(),
+                  isDense: true,
+                ),
+              ),
+              const SizedBox(
+                height: 16.0,
+              ),
+              const Text(
+                'Nomor SIP',
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              const SizedBox(
+                height: 4.0,
+              ),
+              TextFormField(
+                controller: regiscontroller.sipNumber,
+                autofocus: true,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  //labelText: 'Masukan Nama',
+                  hintText: 'nomor SIP (opsional)',
                   border: OutlineInputBorder(),
                   isDense: true,
                 ),
@@ -139,7 +162,7 @@ class FormRegister extends StatelessWidget {
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   //labelText: 'Masukan Nama',
-                  hintText: 'Masukin Lama Bekerja',
+                  hintText: 'Tahun',
                   border: OutlineInputBorder(),
                   isDense: true,
                 ),
@@ -365,6 +388,169 @@ class FormRegister extends StatelessWidget {
                     ))
               ],
             )),
+        Step(
+            title: Text(ctx.stepIndex == 3 ? "Upload Dokumen" : ""),
+            isActive: ctx.stepIndex >= 3,
+            state: ctx.stepIndex >= 3 ? StepState.complete : StepState.indexed,
+            content: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Upload Dokumen Pendukung',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(
+                  height: 16.0,
+                ),
+                const Text(
+                  'Upload Lamaran',
+                  style: TextStyle(fontSize: 14),
+                ),
+                const SizedBox(
+                  height: 4.0,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                          readOnly: true,
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                              return 'File harus diupload';
+                            } else {
+                              return null;
+                            }
+                          },
+                          controller: regiscontroller.fileUpload,
+                          decoration: const InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(5.0),
+                                ),
+                                borderSide:
+                                    BorderSide(color: Colors.white, width: 2)),
+                            hintText: 'Upload Lamaran',
+                            contentPadding: EdgeInsets.all(10.0),
+                          ),
+                          style: const TextStyle(fontSize: 16.0)),
+                    ),
+                    const SizedBox(width: 5),
+                    ElevatedButton.icon(
+                      icon: const Icon(
+                        Icons.upload_file,
+                        color: Colors.white,
+                        size: 24.0,
+                      ),
+                      label: const Text('Pilih File',
+                          style: TextStyle(fontSize: 16.0)),
+                      onPressed: () {
+                        regiscontroller.selectFile();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(122, 48),
+                        maximumSize: const Size(122, 48),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const Text(
+                  ' ekstensi file .pdf',
+                  style: TextStyle(fontSize: 14),
+                ),
+                const SizedBox(
+                  height: 16.0,
+                ),
+                const Text(
+                  'Upload bukti nomor STR',
+                  style: TextStyle(fontSize: 14),
+                ),
+                const SizedBox(
+                  height: 4.0,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                          readOnly: true,
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                              return 'File harus diupload';
+                            } else {
+                              return null;
+                            }
+                          },
+                          controller: regiscontroller.file2Upload,
+                          decoration: const InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(5.0),
+                                ),
+                                borderSide:
+                                    BorderSide(color: Colors.white, width: 2)),
+                            hintText: 'Upload bukti',
+                            contentPadding: EdgeInsets.all(10.0),
+                          ),
+                          style: const TextStyle(fontSize: 16.0)),
+                    ),
+                    const SizedBox(width: 5),
+                    ElevatedButton.icon(
+                      icon: const Icon(
+                        Icons.upload_file,
+                        color: Colors.white,
+                        size: 24.0,
+                      ),
+                      label: const Text('Pilih File',
+                          style: TextStyle(fontSize: 16.0)),
+                      onPressed: () {
+                        regiscontroller.selectFileSTR();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(122, 48),
+                        maximumSize: const Size(122, 48),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const Text(
+                  ' ekstensi file .pdf',
+                  style: TextStyle(fontSize: 14),
+                ),
+                const SizedBox(
+                  height: 32.0,
+                ),
+                Row(
+                  children: [
+                    Obx(() => Checkbox(
+                        value: regiscontroller.aggreement.value,
+                        onChanged: (val) {
+                          regiscontroller.aggreement(val);
+                        })),
+                    const Expanded(
+                        child: Text(
+                      'Dengan ini saya menyetujui semua peryaratan dan ketentuan yang berlaku',
+                      maxLines: 3,
+                      style: TextStyle(
+                          fontSize: 16.0, fontWeight: FontWeight.w400),
+                      softWrap: true,
+                    ))
+                  ],
+                ),
+                const SizedBox(
+                  height: 16.0,
+                ),
+              ],
+            )),
       ];
     }
 
@@ -397,12 +583,12 @@ class FormRegister extends StatelessWidget {
                   if (ctx.stepIndex != 0)
                     TextButton(
                       onPressed: controller.onStepCancel,
-                      child: const Text('KEMBALI'),
+                      child: const Text('Kembali'),
                     ),
                   if (ctx.stepIndex != getSteps().length - 1)
                     ElevatedButton(
                       onPressed: controller.onStepContinue,
-                      child: const Text('LANJUT'),
+                      child: const Text('Lanjut'),
                     ),
                   if (ctx.stepIndex == getSteps().length - 1)
                     Obx(() => regiscontroller.isLoading.value
@@ -418,7 +604,7 @@ class FormRegister extends StatelessWidget {
                             onPressed: () {
                               regiscontroller.onSubmit();
                             },
-                            child: const Text('SUBMIT'),
+                            child: const Text('Daftar'),
                           )),
                 ],
               );

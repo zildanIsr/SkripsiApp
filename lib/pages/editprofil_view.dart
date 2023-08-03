@@ -148,7 +148,7 @@ class EditForm extends GetView<EditFormController> {
                       },
                       decoration: const InputDecoration(
                         //labelText: 'Masukan Nama',
-                        hintText: 'Masukin nama',
+                        hintText: 'Nama lengkap',
                         border: OutlineInputBorder(),
                         isDense: true,
                       ),

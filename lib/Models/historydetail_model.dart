@@ -13,7 +13,7 @@ class HistoryDetail {
   int id;
   String orderId;
   int productId;
-  int perawatId;
+  int nurseId;
   int userId;
   int uAddressId;
   int totprice;
@@ -25,7 +25,7 @@ class HistoryDetail {
   DateTime createdAt;
   DateTime updatedAt;
   Product product;
-  Perawat perawat;
+  Nurse nurse;
   User user;
   Address address;
 
@@ -33,7 +33,7 @@ class HistoryDetail {
     required this.id,
     required this.orderId,
     required this.productId,
-    required this.perawatId,
+    required this.nurseId,
     required this.userId,
     required this.uAddressId,
     required this.totprice,
@@ -45,7 +45,7 @@ class HistoryDetail {
     required this.createdAt,
     required this.updatedAt,
     required this.product,
-    required this.perawat,
+    required this.nurse,
     required this.user,
     required this.address,
   });
@@ -54,7 +54,7 @@ class HistoryDetail {
         id: json["id"],
         orderId: json["orderId"],
         productId: json["productId"],
-        perawatId: json["perawatId"],
+        nurseId: json["nurseId"],
         userId: json["userId"],
         uAddressId: json["uAddressId"],
         totprice: json["totprice"],
@@ -66,7 +66,7 @@ class HistoryDetail {
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
         product: Product.fromJson(json["Product"]),
-        perawat: Perawat.fromJson(json["Perawat"]),
+        nurse: Nurse.fromJson(json["Nurse"]),
         user: User.fromJson(json["User"]),
         address: Address.fromJson(json["Address"]),
       );
@@ -75,7 +75,7 @@ class HistoryDetail {
         "id": id,
         "orderId": orderId,
         "productId": productId,
-        "perawatId": perawatId,
+        "nurseId": nurseId,
         "userId": userId,
         "uAddressId": uAddressId,
         "totprice": totprice,
@@ -87,7 +87,7 @@ class HistoryDetail {
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),
         "Product": product.toJson(),
-        "Perawat": perawat.toJson(),
+        "Nurse": nurse.toJson(),
         "User": user.toJson(),
         "Address": address.toJson(),
       };
@@ -104,6 +104,7 @@ class Address {
   String country;
   double latitude;
   double longitude;
+  bool status;
   int userId;
   DateTime createdAt;
   DateTime updatedAt;
@@ -119,6 +120,7 @@ class Address {
     required this.country,
     required this.latitude,
     required this.longitude,
+    required this.status,
     required this.userId,
     required this.createdAt,
     required this.updatedAt,
@@ -135,6 +137,7 @@ class Address {
         country: json["country"],
         latitude: json["latitude"]?.toDouble(),
         longitude: json["longitude"]?.toDouble(),
+        status: json["status"],
         userId: json["userId"],
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
@@ -151,22 +154,23 @@ class Address {
         "country": country,
         "latitude": latitude,
         "longitude": longitude,
+        "status": status,
         "userId": userId,
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),
       };
 }
 
-class Perawat {
+class Nurse {
   String strNumber;
   User user;
 
-  Perawat({
+  Nurse({
     required this.strNumber,
     required this.user,
   });
 
-  factory Perawat.fromJson(Map<String, dynamic> json) => Perawat(
+  factory Nurse.fromJson(Map<String, dynamic> json) => Nurse(
         strNumber: json["strNumber"],
         user: User.fromJson(json["User"]),
       );
@@ -180,28 +184,24 @@ class Perawat {
 class User {
   String name;
   String phoneNumber;
-  dynamic image;
-  int? id;
+  String image;
 
   User({
     required this.name,
     required this.phoneNumber,
-    this.image,
-    this.id,
+    required this.image,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         name: json["name"],
         phoneNumber: json["phoneNumber"],
         image: json["image"],
-        id: json["id"],
       );
 
   Map<String, dynamic> toJson() => {
         "name": name,
         "phoneNumber": phoneNumber,
         "image": image,
-        "id": id,
       };
 }
 

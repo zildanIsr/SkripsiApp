@@ -92,7 +92,7 @@ class ListLayananCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   child: Column(
                     children: [
                       const Row(
@@ -101,7 +101,7 @@ class ListLayananCard extends StatelessWidget {
                           Text(
                             'Pilih Kategori',
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                             ),
                           ),
                           SizedBox(
@@ -119,7 +119,7 @@ class ListLayananCard extends StatelessWidget {
                           const Text(
                             'Harga Layanan',
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                             ),
                           ),
                           const SizedBox(
@@ -213,7 +213,7 @@ class ListLayananCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontSize: 22.0,
+                      fontSize: 20.0,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

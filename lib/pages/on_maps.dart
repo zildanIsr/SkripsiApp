@@ -34,6 +34,11 @@ class OnMapViewState extends State<OnMapView> {
   late AddressModel newAddress;
   String setAddress = '';
 
+  Future<void> _disposeController() async {
+    final controller = await _controller.future;
+    controller.dispose();
+  }
+
   @override
   void initState() {
     _position = Marker(
@@ -47,7 +52,7 @@ class OnMapViewState extends State<OnMapView> {
 
   void loadposition() {
     getUserCurrentLocation().then((value) async {
-      _addNewMaker(LatLng(value.latitude, value.longitude));
+      _newAddress(LatLng(value.latitude, value.longitude));
 
       List<Placemark> placemarks =
           await placemarkFromCoordinates(value.latitude, value.longitude);
@@ -66,17 +71,11 @@ class OnMapViewState extends State<OnMapView> {
             country: placemarks.reversed.last.country!,
             latitude: value.latitude,
             longitude: value.longitude,
+            status: true,
             userId: authC.user.id!,
             updatedAt: DateTime.now(),
             createdAt: DateTime.now());
       });
-
-      CameraPosition cameraPosition = CameraPosition(
-          target: LatLng(value.latitude, value.longitude), zoom: 16);
-
-      final GoogleMapController controller = await _controller.future;
-
-      controller.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
     });
   }
 
@@ -111,7 +110,7 @@ class OnMapViewState extends State<OnMapView> {
     return Future.delayed(const Duration(seconds: 1)).then((_) async {
       var responses = await ac.addNewAddress(data);
       if (responses >= 400 && responses < 500) {
-        return Get.snackbar("Error", "Gagal menambahkan alamat",
+        return Get.snackbar("Gagal", "Gagal menambahkan alamat",
             messageText: const Text(
               "Gagal menambahkan alamat",
               style: TextStyle(fontSize: 16, color: Colors.white),
@@ -120,7 +119,7 @@ class OnMapViewState extends State<OnMapView> {
             snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.red.shade300);
       } else if (responses >= 500) {
-        return Get.snackbar("Error", "Server Error",
+        return Get.snackbar("Gagal", "Server Error",
             messageText: const Text(
               "Server Error",
               style: TextStyle(fontSize: 16, color: Colors.white),
@@ -130,7 +129,7 @@ class OnMapViewState extends State<OnMapView> {
             backgroundColor: Colors.red.shade300);
       } else if (responses == 201) {
         Get.back();
-        return Get.snackbar("Success", '',
+        return Get.snackbar("Berhasil", '',
             messageText: const Text(
               "Berhasil menambahkan alamat",
               style: TextStyle(fontSize: 16, color: Colors.white),
@@ -140,6 +139,12 @@ class OnMapViewState extends State<OnMapView> {
             backgroundColor: Colors.green.shade300);
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _disposeController();
+    super.dispose();
   }
 
   @override
@@ -157,8 +162,8 @@ class OnMapViewState extends State<OnMapView> {
                 _controller.complete(controller);
               },
               markers: {_position},
-              onTap: _addNewMaker,
-              onLongPress: _addNewMaker,
+              onTap: _newAddress,
+              onLongPress: _newAddress,
             ),
             SizedBox(
               width: double.infinity,
@@ -198,7 +203,7 @@ class OnMapViewState extends State<OnMapView> {
                         child: IconButton(
                             onPressed: () {
                               getUserCurrentLocation().then((value) async {
-                                _addNewMaker(
+                                _newAddress(
                                     LatLng(value.latitude, value.longitude));
 
                                 CameraPosition cameraPosition = CameraPosition(
@@ -294,13 +299,13 @@ class OnMapViewState extends State<OnMapView> {
     );
   }
 
-  void _addNewMaker(LatLng pos) async {
+  void _newAddress(LatLng pos) async {
     List<Placemark> placemarks =
         await placemarkFromCoordinates(pos.latitude, pos.longitude);
 
     setState(() {
       _position = Marker(
-          markerId: const MarkerId('1'),
+          markerId: const MarkerId('Posisi'),
           infoWindow: const InfoWindow(title: 'Rumah'),
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
           position: pos);
@@ -318,9 +323,17 @@ class OnMapViewState extends State<OnMapView> {
           country: placemarks.reversed.last.country!,
           latitude: pos.latitude,
           longitude: pos.longitude,
+          status: true,
           userId: authC.user.id!,
           updatedAt: DateTime.now(),
           createdAt: DateTime.now());
     });
+
+    CameraPosition cameraPosition =
+        CameraPosition(target: LatLng(pos.latitude, pos.longitude), zoom: 16);
+
+    final GoogleMapController controller = await _controller.future;
+
+    controller.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
   }
 }
